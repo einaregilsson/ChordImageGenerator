@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web;
+using System.Collections.Generic;
 
 namespace EinarEgilsson.Chords {
 
@@ -24,18 +25,22 @@ namespace EinarEgilsson.Chords {
                 path = path.Substring(0, path.Length - 1);
             }
 
-            string[] parts = path.Split('/');
+            List<string>  parts = new List<string>(path.Split('/'));
+
+            if (parts.Count > 0 && parts[0].ToLower().StartsWith("chord.ashx")) {
+                parts.RemoveAt(0);
+            }
             string name = "", chord = "000000", fingers = null, size = "2";
-            if (parts.Length > 0) {
+            if (parts.Count > 0) {
                 name = parts[0];
             }
-            if (parts.Length > 1) {
+            if (parts.Count > 1) {
                 chord = parts[1];
             }
-            if (parts.Length > 2) {
+            if (parts.Count > 2) {
                 fingers = parts[2];
             }
-            if (parts.Length > 3) {
+            if (parts.Count > 3) {
                 size = parts[3];
             }
             ChordBoxImage img = new ChordBoxImage(name, chord, fingers, size);

@@ -39,8 +39,14 @@ function showChord() {
     }
     var fingers = fE.value+fA.value+fD.value+fG.value+fB.value+fe.value;
     var chordUrl = [name,chord,fingers,size].join('/');
-    var url = 'http://' + document.location.host + '/' + chordUrl;
-    document.location = '#' + chordUrl;
+    var url = 'http://' + document.location.host + '/';
+    
+    if (document.location.host == 'tech.einaregilsson.com') {
+        //Special case for tech.einaregilsson.com, which doesn't use the chord.ashx prefix
+        url += chordUrl;
+    } else {
+        url += 'Chord.ashx/' + chordUrl;
+    }
     
     $('chord-link').setAttribute('href', url);
     $('chord-link').innerHTML = url;
@@ -53,7 +59,7 @@ function showChord() {
     image.setAttribute('title', name + ' chord');
 }
 
- function load(){
+function load(){
     var strings = ['E', 'A', 'D', 'G', 'B', 'e'];    
     for (var i in strings) {
         window['f'+strings[i]] = $('f'+strings[i]);

@@ -13,7 +13,7 @@ namespace EinarEgilsson.Chords {
         private Bitmap _bitmap;
         private Graphics _graphics;
 
-        const char NO_FINGER = '0';
+        const char NO_FINGER = '-';
         const char THUMB = 'T';
         const char INDEX_FINGER = '1';
         const char MIDDLE_FINGER = '2';
@@ -66,7 +66,6 @@ namespace EinarEgilsson.Chords {
             InitializeSizes();
         }
 
-
         private void InitializeSizes() {
             _fretWidth = 4 * _size;
             _nutHeight = _fretWidth / 2f;
@@ -117,7 +116,7 @@ namespace EinarEgilsson.Chords {
         private void ParseFingers(string fingers) {
             if (fingers == null) {
                 return; //Allowed to not specify fingers
-            } else if (!Regex.IsMatch(fingers, @"[tT01234]{6}")) {
+            } else if (!Regex.IsMatch(fingers, @"[tT\-1234]{6}")) {
                 _error = true;
             } else {
                 _fingers = fingers.ToUpper().ToCharArray();
