@@ -3,16 +3,17 @@ using System.Web;
 
 namespace EinarEgilsson.Chords {
 
-    public class ChordHandler : IHttpHandler {
+    public class Chord: IHttpHandler {
 
         public void ProcessRequest(HttpContext context) {
             string path = context.Request.RawUrl;
-            if (path.ToLower() == "/chordhandler.ashx") {
-                context.Response.Redirect("http://tech.einaregilsson.com/2009/05/20/online-chord-image-generator/", true);
-            }
-            string prefix = "/ChordHandler.ashx?404;http://chords.einaregilsson.com:80";
-            if (path.ToLower().StartsWith(prefix.ToLower())) {
-                path = path.Substring(prefix.Length);
+
+            string productionPrefix = "/Chord.ashx?404;http://chords.einaregilsson.com:80";
+            string developmentPrefix = "/Chord.ashx/";
+            if (path.ToLower().StartsWith(productionPrefix.ToLower())) {
+                path = path.Substring(productionPrefix.Length);
+            } else if (path.ToLower().StartsWith(developmentPrefix)) {
+                path = path.Substring(developmentPrefix.Length);
             }
             
             if (path.StartsWith("/")) {

@@ -1,0 +1,86 @@
+body
+{
+    background-color:#E0E0E0;
+    margin:0;
+    font-family:Helvetica, Verdana, Arial, Sans-Serif;
+}
+
+table
+{
+    margin:auto;
+}
+
+a, a:visited
+{
+    text-decoration:none;
+    color:Blue;
+}
+
+img
+{
+    margin:auto;
+    display:block;
+    border:none;
+}
+
+#header h1
+{
+    color:White;
+}
+
+#header
+{
+    background-color:#369;
+    border-left:solid 1px black;
+    border-right:solid 1px black;
+    border-top: solid 1px black;
+}
+
+div#pagebox
+{
+    border-top:solid 1px black;
+    background-color:White;
+    border-style:solid;
+    border-width:1px 3px 3px 1px;
+    min-height:500px;
+    margin:30px auto;
+    width:700px;
+}
+
+
+h1,h2,h3,h4,h5,h6 { text-align:center;}
+#wraptable td
+{
+    padding:20px;
+}
+
+#wraptable td table td
+{
+    padding:0px;
+}
+
+#positions, #fingers
+{
+    text-align:center;
+    margin:auto;
+}
+
+#positions input, #fingers input
+{
+    width:20px;
+    text-align:center;
+}
+
+#examples
+{
+    text-align:left;
+    width:400px;
+    border:dotted 0px black;
+    margin:20px auto;
+    padding:3px;
+}
+
+#chordimage
+{
+    text-align:center;
+}

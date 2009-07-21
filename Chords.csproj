@@ -56,14 +56,17 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChordHandler.ashx.cs">
-      <DependentUpon>ChordHandler.ashx</DependentUpon>
+    <Compile Include="Chord.ashx.cs">
+      <DependentUpon>Chord.ashx</DependentUpon>
     </Compile>
     <Compile Include="ChordBoxImage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ChordHandler.ashx" />
+    <Content Include="Chord.ashx" />
+    <Content Include="chords.css" />
+    <Content Include="chords.js" />
+    <Content Include="index.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

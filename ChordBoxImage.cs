@@ -1,10 +1,10 @@
 ﻿using System;
-using System.IO;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Drawing.Drawing2D;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace EinarEgilsson.Chords {
 

@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <title>Chord Image Generator</title>
+    <link rel="Stylesheet" href="chords.css" />
+    <script src="chords.js" type="text/javascript"></script>
+</head>
+<body onload="load();">
+    <div id="pagebox">
+        <h3>Chord Image Generator</h3>
+        <table id="wraptable">
+            <tr>
+                <td>Name: <input id="chordname" type="text" /></td>
+                <td>
+               Size: <select id="size">
+                        <option value="1">1</option>
+                        <option value="2" selected="selected">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h3>Fret positions</h3>
+                    <table id="positions">
+                        <tr>
+                            <td>E</td>
+                            <td>A</td>
+                            <td>D</td>
+                            <td>G</td>
+                            <td>B</td>
+                            <td>E</td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" maxlength="2" id="pE"/></td>
+                            <td><input type="text" maxlength="2" id="pA"/></td>
+                            <td><input type="text" maxlength="2" id="pD"/></td>
+                            <td><input type="text" maxlength="2" id="pG"/></td>
+                            <td><input type="text" maxlength="2" id="pB"/></td>
+                            <td><input type="text" maxlength="2" id="pe"/></td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <h3>Fingers used</h3>
+                    <table id="fingers">
+                        <tr>
+                            <td>E</td>
+                            <td>A</td>
+                            <td>D</td>
+                            <td>G</td>
+                            <td>B</td>
+                            <td>E</td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" maxlength="1" id="fE" value="-"/></td>
+                            <td><input type="text" maxlength="1" id="fA" value="-"/></td>
+                            <td><input type="text" id="fD" maxlength="1" value="-"/></td>
+                            <td><input type="text" id="fG" maxlength="1" value="-"/></td>
+                            <td><input type="text" id="fB" maxlength="1" value="-"/></td>
+                            <td><input type="text" id="fe" maxlength="1" value="-"/></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <div id="chordimage">
+            <button onclick="showChord();">Generate chord image</button><br />
+            <a id="chord-image-link" href="#"><img id="chord-image" src="" alt=""/></a>
+            <a id="chord-link" href="#"></a>
+        </div>
+
+        <div id="examples">
+            <h3>Example chords</h3>
+            Major chords:
+            <a href="#A/x02220/--123-">A</a>
+            <a href="#B/x2444x/-1333-">B</a>
+            <a href="#C/x32010/-32-1-">C</a>
+            <a href="#D/xx0232/---132">D</a>
+            <a href="#E/022100/-231--">E</a>
+            <a href="#F/133211/134211">F</a>
+            <a href="#G/320033/12--34">G</a>
+            <br />Minor chords:
+            <a href="#Am/x02210/--231-">Am</a>
+            <a href="#Bm/x24432/-13421">Bm</a>
+            <a href="#Cm/x35543/-13421">Cm</a>
+            <a href="#Dm/xx0231/---231">Dm</a>
+            <a href="#Em/022000/-23---">Em</a>
+            <a href="#Fm/133111/134111">Fm</a>
+            <a href="#Gm/355333/134111">Gm</a>
+            <br />Power chords:
+            <a href="#A5/x022xx/--11--">A5</a>
+            <a href="#B5/x244xx/-134--">B5</a>
+            <a href="#C5/x355xx/-134--">C5</a>
+            <a href="#D5/x577xx/-134--">D5</a>
+            <a href="#E5/022xxx/-11---">E5</a>
+            <a href="#F5/133xxx/134---">F5</a>
+            <a href="#G5/355xxx/134---">G5</a>
+        </div>
+    </div>
+</body>
+</html>
