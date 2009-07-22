@@ -1,4 +1,28 @@
-﻿using System.Reflection;
+/*
+ * Chord Image Generator
+ * http://tech.einaregilsson.com/2009/07/22/chord-image-generator/
+ *
+ * Copyright (C) 2009 Einar Egilsson [einar@einaregilsson.com]
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  
+ * $HeadURL$
+ * $LastChangedDate$
+ * $Author$
+ * $Revision$
+ */
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -6,11 +30,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Chords")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Generates images of guitar chord boxes")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Hewlett-Packard")]
+[assembly: AssemblyCompany("Einar Egilsson")]
 [assembly: AssemblyProduct("Chords")]
-[assembly: AssemblyCopyright("Copyright © Hewlett-Packard 2009")]
+[assembly: AssemblyCopyright("Copyright © Einar Egilsson 2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

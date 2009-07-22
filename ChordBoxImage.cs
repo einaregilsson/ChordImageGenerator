@@ -1,4 +1,28 @@
-﻿using System;
+﻿/*
+ * Chord Image Generator
+ * http://tech.einaregilsson.com/2009/07/22/chord-image-generator/
+ *
+ * Copyright (C) 2009 Einar Egilsson [einar@einaregilsson.com]
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  
+ * $HeadURL$
+ * $LastChangedDate$
+ * $Author$
+ * $Revision$
+ */
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -8,10 +32,13 @@ using System.Text.RegularExpressions;
 
 namespace EinarEgilsson.Chords {
 
+    /// <summary>
+    /// Class to create images of chordboxes. Can be saved
+    /// to any subclass of Stream.
+    /// </summary>
     public class ChordBoxImage : IDisposable {
 
-        private Bitmap _bitmap;
-        private Graphics _graphics;
+        #region Constants
 
         const char NO_FINGER = '-';
         const char THUMB = 'T';
@@ -23,6 +50,12 @@ namespace EinarEgilsson.Chords {
         const int MUTED = -1;
         const int FRET_COUNT = 5;
         const string FONT_NAME = "Arial";
+
+        #endregion
+
+        #region Fields
+        private Bitmap _bitmap;
+        private Graphics _graphics;
 
         private int _size;
         private int[] _chordPositions = new int[6];
@@ -58,6 +91,10 @@ namespace EinarEgilsson.Chords {
 
         private int _baseFret;
 
+        #endregion
+
+        #region Constructor
+
         public ChordBoxImage(string name, string chord, string fingers, string size) {
             _chordName = (name == null) ? "" : name.Replace(" ", "");
             ParseChord(chord);
@@ -66,6 +103,23 @@ namespace EinarEgilsson.Chords {
             InitializeSizes();
         }
 
+        #endregion
+
+        #region Public methods
+
+        public void Save(Stream output) {
+            CreateImage();
+            _bitmap.Save(output, ImageFormat.Jpeg);
+        }
+
+        public void Dispose() {
+            _bitmap.Dispose();
+        }
+
+        #endregion
+
+        #region Private methods
+        
         private void InitializeSizes() {
             _fretWidth = 4 * _size;
             _nutHeight = _fretWidth / 2f;
@@ -156,7 +210,7 @@ namespace EinarEgilsson.Chords {
             }
         }
 
-        protected void CreateImage() {
+        private void CreateImage() {
             _bitmap = new Bitmap(_imageWidth, _imageHeight);
             _graphics = Graphics.FromImage(_bitmap);
             _graphics.SmoothingMode = SmoothingMode.AntiAlias;
@@ -175,7 +229,7 @@ namespace EinarEgilsson.Chords {
             }
         }
 
-        protected void DrawChordBox() {
+        private void DrawChordBox() {
             Pen pen = new Pen(_foregroundBrush, _lineWidth);
             float totalFretWidth = _fretWidth + _lineWidth;
 
@@ -197,7 +251,8 @@ namespace EinarEgilsson.Chords {
         }
 
         private struct Bar { public int Str, Pos, Length; public char Finger; }
-        protected void DrawBars() {
+        
+        private void DrawBars() {
             var bars = new Dictionary<char, Bar>();
             for (int i = 0; i < 5; i++) {
                 if (_chordPositions[i] != MUTED && _chordPositions[i] != OPEN && _fingers[i] != NO_FINGER && !bars.ContainsKey(_fingers[i])) {
@@ -224,7 +279,7 @@ namespace EinarEgilsson.Chords {
             }
         }
 
-        protected void DrawChordPositions() {
+        private void DrawChordPositions() {
             float yoffset = _ystart - _fretWidth;
             float xoffset = _lineWidth / 2f;
             float totalFretWidth = _fretWidth + _lineWidth;
@@ -258,7 +313,7 @@ namespace EinarEgilsson.Chords {
             }
         }
 
-        protected void DrawFingers() {
+        private void DrawFingers() {
             float xpos = _xstart + (0.5f * _lineWidth);
             float ypos = _ystart + _boxHeight;
             Font font = new Font(FONT_NAME, _fingerFontSize);
@@ -271,7 +326,7 @@ namespace EinarEgilsson.Chords {
             }
         }
 
-        protected void DrawChordName() {
+        private void DrawChordName() {
 
             Font nameFont = new Font(FONT_NAME, _nameFontSize, GraphicsUnit.Pixel);
             Font superFont = new Font(FONT_NAME, _superScriptFontSize, GraphicsUnit.Pixel);
@@ -302,13 +357,6 @@ namespace EinarEgilsson.Chords {
             }
         }
 
-        public void Save(Stream output) {
-            CreateImage();
-            _bitmap.Save(output, ImageFormat.Jpeg);
-        }
-
-        public void Dispose() {
-            _bitmap.Dispose();
-        }
+        #endregion
     }
 }
