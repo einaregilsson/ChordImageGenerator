@@ -36,14 +36,6 @@ namespace EinarEgilsson.Chords {
     /// </summary>
     public class Chord : IHttpHandler {
 
-        private static StreamWriter logger;
-        static Chord()
-        {
-            string logfile = (string) new AppSettingsReader().GetValue("logfile",typeof(string));
-            FileStream stream = new FileStream(logfile, FileMode.Append, FileAccess.Write);
-            logger = new StreamWriter(stream);
-        }
-
         public void ProcessRequest(HttpContext context) {
             string path = context.Request.RawUrl;
 
@@ -66,13 +58,6 @@ namespace EinarEgilsson.Chords {
 
             if (path.ToLower().StartsWith("chord.ashx/")) {
                 path = path.Substring("chord.ashx/".Length);
-            }
-
-            //Log this
-            string logEntry = String.Format("{0} - {1} - {2} - {3}\r\n", DateTime.Now, path, context.Request.ServerVariables["HTTP_REFERER"], context.Request.ServerVariables["REMOTE_ADDR"]);
-            lock (logger) {
-                logger.Write(logEntry);
-                logger.Flush();
             }
 
             List<string> parts = new List<string>(path.Split('/'));

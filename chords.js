@@ -109,8 +109,8 @@ function showChord() {
     var chordUrl = [name,chord,fingers,size].join('/');
     var url = 'http://' + document.location.host + '/';
     
-    if (document.location.host == 'tech.einaregilsson.com') {
-        //Special case for tech.einaregilsson.com, which doesn't use the chord.ashx prefix
+    if (document.location.host == 'chords.einaregilsson.com') {
+        //Special case for chords.einaregilsson.com, which doesn't use the chord.ashx prefix
         url += chordUrl;
     } else {
         url += 'Chord.ashx/' + chordUrl;
