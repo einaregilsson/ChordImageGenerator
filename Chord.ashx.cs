@@ -23,10 +23,9 @@
  * $Revision$
  */
 using System;
+using System.Text.RegularExpressions;
 using System.Web;
-using System.IO;
 using System.Collections.Generic;
-using System.Configuration;
 
 namespace EinarEgilsson.Chords {
 
@@ -37,28 +36,8 @@ namespace EinarEgilsson.Chords {
     public class Chord : IHttpHandler {
 
         public void ProcessRequest(HttpContext context) {
-            string path = context.Request.RawUrl;
-
-            //Special cases for chords.einaregilsson.com
-            string productionPrefix = "/Chord.ashx?404;http://chords.einaregilsson.com:80";
-            string developmentPrefix = "/Chord.ashx/";
-            if (path.ToLower().StartsWith(productionPrefix.ToLower())) {
-                path = path.Substring(productionPrefix.Length);
-            } else if (path.ToLower().StartsWith(developmentPrefix)) {
-                path = path.Substring(developmentPrefix.Length);
-            }
-
-            if (path.StartsWith("/")) {
-                path = path.Substring(1);
-            }
-
-            if (path.EndsWith("/")) {
-                path = path.Substring(0, path.Length - 1);
-            }
-
-            if (path.ToLower().StartsWith("chord.ashx/")) {
-                path = path.Substring("chord.ashx/".Length);
-            }
+            //Important to use .RawUrl, since that hasn't been set to chord.ashx
+            string path = Regex.Replace(context.Request.RawUrl, "^/|/$", "");
 
             List<string> parts = new List<string>(path.Split('/'));
 

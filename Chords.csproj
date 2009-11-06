@@ -31,8 +31,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web.config" />
@@ -42,12 +44,16 @@
       <DependentUpon>Chord.ashx</DependentUpon>
     </Compile>
     <Compile Include="ChordBoxImage.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Chord.ashx" />
     <Content Include="chords.css" />
     <Content Include="chords.js" />
+    <Content Include="Global.asax" />
     <Content Include="index.html" />
   </ItemGroup>
   <ItemGroup>
