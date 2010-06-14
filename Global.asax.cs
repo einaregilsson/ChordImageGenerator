@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Web;
+using EinarEgilsson.Chords;
 
 namespace Chords
 {
@@ -18,17 +20,14 @@ namespace Chords
 
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
-            string path = HttpContext.Current.Request.RawUrl;
-            if (path.ToLower().EndsWith(".css") 
-                || path.ToLower().EndsWith(".js") 
-                || path.ToLower().StartsWith("/chord.ashx")
-                || path == "/" 
-                || path.ToLower() == "/index.html"
-                || path.ToLower() == "/favicon.ico")
+            var excluded = new List<string>(new[] {"~/chords.css", "~/chords.js", "~/", "~/chord.ashx", "~/index.html"});
+            string path = HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath;
+
+            if (excluded.Contains(path.ToLower()))
             {
                 return;
             }
-            HttpContext.Current.RewritePath("/chord.ashx");
+            HttpContext.Current.RemapHandler(new Chord());
         }
 
         protected void Application_AuthenticateRequest(object sender, EventArgs e)

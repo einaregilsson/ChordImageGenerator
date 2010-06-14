@@ -37,8 +37,7 @@ namespace EinarEgilsson.Chords {
 
         public void ProcessRequest(HttpContext context) {
             //Important to use .RawUrl, since that hasn't been set to chord.ashx
-            string path = Regex.Replace(context.Request.RawUrl, "^/|/$", "");
-
+            string path = Regex.Replace(context.Request.AppRelativeCurrentExecutionFilePath, "^~/|/$", "");
             List<string> parts = new List<string>(path.Split('/'));
 
             //Defaults
