@@ -29,6 +29,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace EinarEgilsson.Chords {
 
@@ -96,21 +97,70 @@ namespace EinarEgilsson.Chords {
         #region Constructor
 
         public ChordBoxImage(string name, string chord, string fingers, string size) {
+            Initialize(name, chord, fingers, size);
+        }
+
+        public ChordBoxImage(string chordPath)
+        {
+            chordPath = Regex.Replace(chordPath, "^/|/$", "");
+            List<string> parts = new List<string>(chordPath.Split('/'));
+
+            //Defaults
+            string name = "", chord = "000000", fingers = null, size = "2";
+            if (parts.Count > 0)
+            {
+                name = parts[0].Replace("%23", "#"); //Depending on the webserver this might not be fixed for us
+            }
+            if (parts.Count > 1)
+            {
+                chord = parts[1];
+            }
+            if (parts.Count > 2)
+            {
+                fingers = parts[2];
+            }
+            if (parts.Count > 3)
+            {
+                size = parts[3];
+            }
+            Initialize(name, chord, fingers, size);
+        }
+
+        private void Initialize(string name, string chord, string fingers, string size)
+        {
             _chordName = (name == null) ? "" : name.Replace(" ", "");
             ParseChord(chord);
             ParseFingers(fingers);
             ParseSize(size);
             InitializeSizes();
+            CreateImage();
         }
 
         #endregion
 
         #region Public methods
 
-        public void Save(Stream output) {
-            CreateImage();
-            _bitmap.Save(output, ImageFormat.Jpeg);
+        public string MimeType
+        {
+            get { return "image/png"; }
         }
+
+        public void Save(Stream output) {
+            _bitmap.Save(output, ImageFormat.Png);
+        }
+
+        public byte[]  GetBytes()
+        {
+            using (var ms = new MemoryStream())
+            {
+                Save(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                byte[] buffer = new byte[ms.Length];
+                ms.Read(buffer, 0, buffer.Length);
+                return buffer;
+            }
+        }
+
 
         public void Dispose() {
             _bitmap.Dispose();
@@ -213,7 +263,7 @@ namespace EinarEgilsson.Chords {
         private void CreateImage() {
             _bitmap = new Bitmap(_imageWidth, _imageHeight);
             _graphics = Graphics.FromImage(_bitmap);
-            _graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            _graphics.SmoothingMode = SmoothingMode.HighQuality;
             _graphics.FillRectangle(_backgroundBrush, 0, 0, _bitmap.Width, _bitmap.Height);
             if (_error) {
                 //Draw red x

@@ -107,9 +107,8 @@ function showChord() {
     name = name.replace(/#/g, '%23');
     var fingers = fE.value+fA.value+fD.value+fG.value+fB.value+fe.value;
     var chordUrl = [name,chord,fingers,size].join('/');
-    var url = 'http://' + document.location.host + '/';
+    var url = document.location.href.replace("index.html", "").replace(/#.*/, "");
     url += chordUrl;
-
     document.location= '#'+chordUrl;   
     
     $('chord-link').setAttribute('href', url);

@@ -27,40 +27,30 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Collections.Generic;
 
-namespace EinarEgilsson.Chords {
+namespace EinarEgilsson.Chords
+{
 
     /// <summary>
     /// HTTP Handler that interprets the url and saves a generated
     /// image to the response stream.
     /// </summary>
-    public class Chord : IHttpHandler {
+    public class Chord : IHttpHandler
+    {
 
-        public void ProcessRequest(HttpContext context) {
+        public void ProcessRequest(HttpContext context)
+        {
             //Important to use .RawUrl, since that hasn't been set to chord.ashx
             string path = Regex.Replace(context.Request.AppRelativeCurrentExecutionFilePath, "^~/|/$", "");
-            List<string> parts = new List<string>(path.Split('/'));
-
-            //Defaults
-            string name = "", chord = "000000", fingers = null, size = "2";
-            if (parts.Count > 0) {
-                name = parts[0];
+            using (var img = new ChordBoxImage(path))
+            {
+                context.Response.ContentType = img.MimeType;
+                context.Response.ExpiresAbsolute = DateTime.Now.AddDays(7);
+                img.Save(context.Response.OutputStream);
             }
-            if (parts.Count > 1) {
-                chord = parts[1];
-            }
-            if (parts.Count > 2) {
-                fingers = parts[2];
-            }
-            if (parts.Count > 3) {
-                size = parts[3];
-            }
-            ChordBoxImage img = new ChordBoxImage(name, chord, fingers, size);
-            context.Response.ContentType = "image/jpg";
-            context.Response.ExpiresAbsolute = DateTime.Now.AddDays(7);
-            img.Save(context.Response.OutputStream);
         }
 
-        public bool IsReusable {
+        public bool IsReusable
+        {
             get { return true; }
         }
     }
