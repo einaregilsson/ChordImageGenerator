@@ -17,10 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *  
- * $HeadURL$
- * $LastChangedDate$
- * $Author$
- * $Revision$
  */
 using System;
 using System.Collections.Generic;
@@ -29,7 +25,6 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Web;
 
 namespace EinarEgilsson.Chords {
 

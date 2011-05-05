@@ -17,20 +17,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *  
- * $HeadURL$
- * $LastChangedDate$
- * $Author$
- * $Revision$
  */
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace EinarEgilsson.Chords.Cgi
 {
+    /// <summary>
+    /// Cgi program to write a chord image to STDOUT. Basically just a hack to get this running on DreamHost...
+    /// </summary>
     class Program
     {
         private static string BasePath
@@ -83,9 +80,9 @@ namespace EinarEgilsson.Chords.Cgi
             using (var writer = new BinaryWriter(Console.OpenStandardOutput()))
             {
                 byte[] imgBytes = img.GetBytes();
-                //writer.Write(Line("HTTP/1.1 200 OK"));
                 writer.Write(Line("Content-Type: {0}", img.MimeType));
                 writer.Write(Line("Content-Length: {0}", imgBytes.Length));
+                writer.Write(Line("Expires: {0}", DateTime.Now.AddDays(7).ToString("R")));
                 writer.Write(Line(""));
                 writer.Write(imgBytes);
             }
