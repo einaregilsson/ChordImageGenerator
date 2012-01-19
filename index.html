@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html>
 <!-- 
 Chord Image Generator
-http://tech.einaregilsson.com/2009/07/23/chord-image-generator/
+http://einaregilsson.com/2009/07/23/chord-image-generator/
 
-Copyright (C) 2009 Einar Egilsson [einar@einaregilsson.com]
+Copyright (C) 2009-2012 Einar Egilsson [einar@einaregilsson.com]
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,17 +17,229 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
-$HeadURL$
-$LastChangedDate$
-$Author$
-$Revision$
 -->
-<html xmlns="http://www.w3.org/1999/xhtml" >
+<html>
 <head>
     <title>Chord Image Generator</title>
-    <link rel="Stylesheet" href="chords.css" />
-    <script src="chords.js" type="text/javascript"></script>
+    <style type="text/css">
+        body
+        {
+			font-family:  Arial, sans-serif; 
+			background-color:#AFCFFE; 
+			padding-top:20px;
+			background-image:-o-linear-gradient(top,#AFCFFE,#fff);
+			background-image:-webkit-linear-gradient(top,#AFCFFE,#fff);
+			background-image:-moz-linear-gradient(top,#AFCFFE,#fff);
+			background-image:linear-gradient(top,#AFCFFE,#fff);
+			filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#AFCFFE', endColorstr='#ffffff');            
+			margin:0;
+            font-size:11pt;
+        }
+
+        table
+        {
+            margin:auto;
+        }
+
+        a, a:visited
+        {
+            text-decoration:none;
+            color:blue;
+        }
+
+        #footer 
+        {
+            font-size:9pt;
+            text-align:center;
+            font-weight: bold;
+            margin: 10px auto 30px auto;
+        }
+
+        #chordname 
+        {
+            width:100px;
+        }
+
+        img
+        {
+            margin:10px auto;
+            display:block;
+            border:none;
+        }
+
+        #header h1
+        {
+            color:White;
+        }
+
+        div#pagebox
+        {
+            color:#222;
+			border-radius:5px;
+			-moz-border-radius:5px;
+			-webkit-border-radius:5px;
+			-o-border-radius:5px;
+			-khtml-border-radius:5px;
+			border:solid 1px black;            
+            background-color:White;
+            min-height:500px;
+            margin:15px auto;
+            width:700px;
+            box-shadow:grey 0px 0px 6px;
+        }
+
+
+        h1,h2,h3,h4,h5,h6 { text-align:center;}
+        #wraptable td
+        {
+            padding:20px;
+        }
+
+        #wraptable td table td
+        {
+            padding:0px;
+        }
+
+        #positions, #fingers
+        {
+            text-align:center;
+            margin:auto;
+        }
+
+        #positions input, #fingers input
+        {
+            width:20px;
+            text-align:center;
+        }
+
+        #examples
+        {
+            text-align:left;
+            width:400px;
+            border:dotted 0px black;
+            margin:20px auto;
+            padding:3px;
+        }
+
+        #chordimage
+        {
+            text-align:center;
+        }    
+    </style>
+    <script type="text/javascript">
+        /**
+        * Setup the string, load the inital chord, setup
+        * example chords
+        */
+        function load() {
+            var strings = ['E', 'A', 'D', 'G', 'B', 'e'];
+            for (var i in strings) {
+                window['f' + strings[i]] = $('f' + strings[i]);
+                window['p' + strings[i]] = $('p' + strings[i]);
+            }
+            window.positions = [pE, pA, pD, pG, pB, pe];
+            window.fingers = [fE, fA, fD, fG, fB, fe];
+
+            var examples = $('examples');
+            for (var i in examples.childNodes) {
+                var node = examples.childNodes[i];
+                if (node.tagName && node.tagName.toUpperCase() == 'A') {
+                    node.onclick = function () {
+                        parseChord(this.href.split('#')[1]);
+                    }
+                }
+            }
+            url = document.location.href;
+            if (url.indexOf('#') != -1) {
+                parseChord(url.substr(url.indexOf('#') + 1));
+            } else {
+                parseChord('D.png?p=xx0232&f=---132');
+            }
+        }
+
+        /**
+        * Returns the html element with the given id
+        */
+        function $(id) {
+            return document.getElementById(id);
+        }
+
+        /**
+        * Parse a chordname of the form name.png?p=positions&f=fingers&s=size
+        * and display it in the textboxes and an image.
+        */
+        function parseChord(chord) {
+            var parts = chord.split('?');
+            $('chordname').value = unescapeName(parts[0]).replace(/\.png$/, '');
+            
+            var p = (chord.match(/p(os)?=([^&]+)/)||{})[2];
+            var f = (chord.match(/f(ingers)?=([^&]+)/)||{})[2];
+            var s = (chord.match(/s(ize)?=([^&]+)/)|| {})[2];
+            for (var i = 0; i < 6; i++) {
+                if (f) {
+                    fingers[i].value = f.charAt(i);
+                }
+                if (p) {
+                    positions[i].value = p.charAt(i);
+                }
+            }
+            $('size').value = s || '2';
+            showChord();
+        }
+
+        function escapeName(name) {
+            return name.replace(/#/g, '%23').replace(/\//, '%2f');
+        }
+
+        function unescapeName(name) {
+            return name.replace(/%23/, '#').replace(/%2f/gi, '/');
+        }
+        /**
+        * Shows a chord image based on the values in the textboxes.
+        */
+        function showChord() {
+
+            for (var i in positions) {
+                var p = positions[i];
+                if (!p.value.match(/^(1|2)?\d|x$/i)) {
+                    alert('Fret position must be a number from 0-24 or X!');
+                    p.focus();
+                    return;
+                }
+            }
+
+            for (var i in fingers) {
+                var f = fingers[i];
+                if (!f.value.match(/^1|2|3|4|T|-$/i)) {
+                    alert('Fingerings must be one of 1,2,3,4,T or -.');
+                    f.focus();
+                    return;
+                }
+            }
+
+            var name = $('chordname').value;
+            var chord = pE.value + '-' + pA.value + '-' + pD.value + '-' + pG.value + '-' + pB.value + '-' + pe.value;
+            var size = $('size').value;
+            if (chord.length == 11) {
+                chord = chord.replace(/-/g, '');
+            }
+            name = escapeName(name);
+            var fingers = fE.value + fA.value + fD.value + fG.value + fB.value + fe.value;
+            var chordUrl = name + '.png?p=' + chord + '&f=' + fingers + '&s=' + size;
+            var url = document.location.href.replace(/index.html.*/, "");
+            url += chordUrl;
+            document.location = '#' + chordUrl;
+
+            $('chord-link').setAttribute('href', url);
+            $('chord-link').innerHTML = url;
+            $('chord-image-link').setAttribute('href', url);
+
+            var image = $('chord-image');
+            image.setAttribute('src', url);
+            image.setAttribute('alt', unescapeName(name) + ' chord');
+            image.setAttribute('title', unescapeName(name) + ' chord');
+        }    
+    </script>
 </head>
 <body onload="load();">
     <div id="pagebox">
@@ -84,8 +296,8 @@ $Revision$
                             <td>E</td>
                         </tr>
                         <tr>
-                            <td><input type="text" maxlength="1" id="fE" value="-"/></td>
-                            <td><input type="text" maxlength="1" id="fA" value="-"/></td>
+                            <td><input type="text" id="fE" maxlength="1" value="-"/></td>
+                            <td><input type="text" id="fA" maxlength="1" value="-"/></td>
                             <td><input type="text" id="fD" maxlength="1" value="-"/></td>
                             <td><input type="text" id="fG" maxlength="1" value="-"/></td>
                             <td><input type="text" id="fB" maxlength="1" value="-"/></td>
@@ -105,32 +317,32 @@ $Revision$
         <div id="examples">
             <h3>Example chords</h3>
             Major chords:
-            <a href="#A/x02220/--123-">A</a>
-            <a href="#B/x2444x/-1333-">B</a>
-            <a href="#C/x32010/-32-1-">C</a>
-            <a href="#D/xx0232/---132">D</a>
-            <a href="#E/022100/-231--">E</a>
-            <a href="#F/133211/134211">F</a>
-            <a href="#G/320033/12--34">G</a>
+            <a href="#A.png?p=x02220&f=--123-">A</a>
+            <a href="#B.png?p=x2444x&f=-1333-">B</a>
+            <a href="#C.png?p=x32010&f=-32-1-">C</a>
+            <a href="#D.png?p=xx0232&f=---132">D</a>
+            <a href="#E.png?p=022100&f=-231--">E</a>
+            <a href="#F.png?p=133211&f=134211">F</a>
+            <a href="#G.png?p=320033&f=12--34">G</a>
             <br />Minor chords:
-            <a href="#Am/x02210/--231-">Am</a>
-            <a href="#Bm/x24432/-13421">Bm</a>
-            <a href="#Cm/x35543/-13421">Cm</a>
-            <a href="#Dm/xx0231/---231">Dm</a>
-            <a href="#Em/022000/-23---">Em</a>
-            <a href="#Fm/133111/134111">Fm</a>
-            <a href="#Gm/355333/134111">Gm</a>
+            <a href="#Am.png?p=x02210&f=--231-">Am</a>
+            <a href="#Bm.png?p=x24432&f=-13421">Bm</a>
+            <a href="#Cm.png?p=x35543&f=-13421">Cm</a>
+            <a href="#Dm.png?p=xx0231&f=---231">Dm</a>
+            <a href="#Em.png?p=022000&f=-23---">Em</a>
+            <a href="#Fm.png?p=133111&f=134111">Fm</a>
+            <a href="#Gm.png?p=355333&f=134111">Gm</a>
             <br />Power chords:
-            <a href="#A5/x022xx/--11--">A5</a>
-            <a href="#B5/x244xx/-134--">B5</a>
-            <a href="#C5/x355xx/-134--">C5</a>
-            <a href="#D5/x577xx/-134--">D5</a>
-            <a href="#E5/022xxx/-11---">E5</a>
-            <a href="#F5/133xxx/134---">F5</a>
-            <a href="#G5/355xxx/134---">G5</a>
+            <a href="#A5.png?p=x022xx&f=--11--">A5</a>
+            <a href="#B5.png?p=x244xx&f=-134--">B5</a>
+            <a href="#C5.png?p=x355xx&f=-134--">C5</a>
+            <a href="#D5.png?p=x577xx&f=-134--">D5</a>
+            <a href="#E5.png?p=022xxx&f=-11---">E5</a>
+            <a href="#F5.png?p=133xxx&f=134---">F5</a>
+            <a href="#G5.png?p=355xxx&f=134---">G5</a>
         </div>
         <div id="footer">
-            More info: <a href="http://tech.einaregilsson.com/2009/07/23/chord-image-generator/">http://tech.einaregilsson.com/2009/07/23/chord-image-generator/</a>
+            More info: <a href="http://einaregilsson.com/2009/07/23/chord-image-generator/">http://einaregilsson.com/2009/07/23/chord-image-generator/</a>
         </div>
     </div>
 </body>

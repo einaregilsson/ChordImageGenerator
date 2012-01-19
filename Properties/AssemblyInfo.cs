@@ -1,8 +1,8 @@
 /*
  * Chord Image Generator
- * http://tech.einaregilsson.com/2009/07/23/chord-image-generator/
+ * http://einaregilsson.com/2009/07/23/chord-image-generator/
  *
- * Copyright (C) 2009 Einar Egilsson [einar@einaregilsson.com]
+ * Copyright (C) 2009-2012 Einar Egilsson [einar@einaregilsson.com]
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *  
- * $HeadURL$
- * $LastChangedDate$
- * $Author$
- * $Revision$
  */
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -34,7 +29,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Einar Egilsson")]
 [assembly: AssemblyProduct("Chords")]
-[assembly: AssemblyCopyright("Copyright © Einar Egilsson 2009")]
+[assembly: AssemblyCopyright("Copyright © Einar Egilsson 2009-2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

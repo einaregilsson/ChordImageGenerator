@@ -1,8 +1,8 @@
 ﻿/*
  * Chord Image Generator
- * http://tech.einaregilsson.com/2009/07/23/chord-image-generator/
+ * http://einaregilsson.com/2009/07/23/chord-image-generator/
  *
- * Copyright (C) 2009 Einar Egilsson [einar@einaregilsson.com]
+ * Copyright (C) 2009-2012 Einar Egilsson [einar@einaregilsson.com]
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *  
  */
 using System;
 using System.Collections.Generic;
@@ -92,37 +91,6 @@ namespace EinarEgilsson.Chords {
         #region Constructor
 
         public ChordBoxImage(string name, string chord, string fingers, string size) {
-            Initialize(name, chord, fingers, size);
-        }
-
-        public ChordBoxImage(string chordPath)
-        {
-            chordPath = Regex.Replace(chordPath, "^/|/$", "");
-            List<string> parts = new List<string>(chordPath.Split('/'));
-
-            //Defaults
-            string name = "", chord = "000000", fingers = null, size = "2";
-            if (parts.Count > 0)
-            {
-                name = parts[0].Replace("%23", "#"); //Depending on the webserver this might not be fixed for us
-            }
-            if (parts.Count > 1)
-            {
-                chord = parts[1];
-            }
-            if (parts.Count > 2)
-            {
-                fingers = parts[2];
-            }
-            if (parts.Count > 3)
-            {
-                size = parts[3];
-            }
-            Initialize(name, chord, fingers, size);
-        }
-
-        private void Initialize(string name, string chord, string fingers, string size)
-        {
             _chordName = (name == null) ? "" : name.Replace(" ", "");
             ParseChord(chord);
             ParseFingers(fingers);
@@ -134,11 +102,6 @@ namespace EinarEgilsson.Chords {
         #endregion
 
         #region Public methods
-
-        public string MimeType
-        {
-            get { return "image/png"; }
-        }
 
         public void Save(Stream output) {
             _bitmap.Save(output, ImageFormat.Png);
