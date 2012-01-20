@@ -229,7 +229,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             name = escapeName(name);
             var fingers = fE.value + fA.value + fD.value + fG.value + fB.value + fe.value;
             var chordUrl = name + '.png?p=' + chord + '&f=' + fingers + '&s=' + size;
-            var url = document.location.href.replace(/index.html.*/, "");
+            var url = 'http://' + document.location.host + document.location.pathname.replace('index.html','');
             url += chordUrl;
             document.location = '#' + chordUrl;
 
