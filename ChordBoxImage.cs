@@ -152,7 +152,7 @@ namespace EinarEgilsson.Chords {
             }
 
             _xstart = _fretWidth;
-            _ystart = 0.2f * _superScriptFontSize + _nameFontSize + _nutHeight + 1.7f * _markerWidth;
+            _ystart = (float) Math.Round(0.2f * _superScriptFontSize + _nameFontSize + _nutHeight + 1.7f * _markerWidth);
 
             _imageWidth = (int)(_boxWidth + 5 * _fretWidth);
             _imageHeight = (int)(_boxHeight + _ystart + _fretWidth + _fretWidth);
