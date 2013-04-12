@@ -29,25 +29,22 @@ namespace EinarEgilsson.Chords
     /// </summary>
     public class ChordHandler : IHttpHandler
     {
-        private string Get(HttpContext context, string key)
-        {
-            return  context.Request.QueryString[key] ?? context.Request.QueryString[key.Substring(0,1)];
-        }
-
         public void ProcessRequest(HttpContext context)
         {
-            //Important to use .RawUrl, since that hasn't been set to chord.ashx
-            string chordName = Regex.Replace(context.Request.AppRelativeCurrentExecutionFilePath, "^~/|/$", "");
-            chordName = Regex.Replace(chordName, @"\.png$", "", RegexOptions.IgnoreCase);
-            
-            string pos = Get(context, "pos") ?? "000000";
-            string fingers = Get(context, "fingers") ?? "------";
-            string size = Get(context, "size") ?? "1";
+            var request = context.Request;
+            var response = context.Response;
+
+            var chordName = Regex.Match(request.FilePath, @"^/(.*)\.png$").Groups[1].Value;
+            var qs = request.QueryString; 
+
+            var pos =        qs["pos"]       ?? qs["p"] ?? "000000";
+            var fingers =    qs["fingers"]   ?? qs["f"] ?? "------";
+            var size =       qs["size"]      ?? qs["s"] ?? "1";
             
             using (var img = new ChordBoxImage(chordName, pos, fingers, size))
             {
-                context.Response.ContentType = "image/png";
-                context.Response.ExpiresAbsolute = DateTime.Now.AddDays(7);
+                response.ContentType = "image/png";
+                response.ExpiresAbsolute = DateTime.Now.AddDays(7);
                 img.Save(context.Response.OutputStream);
             }
         }
