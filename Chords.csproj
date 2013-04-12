@@ -51,14 +51,11 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChordHandler.ashx.cs">
-      <DependentUpon>ChordHandler.ashx</DependentUpon>
-    </Compile>
     <Compile Include="ChordBoxImage.cs" />
+    <Compile Include="ChordHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ChordHandler.ashx" />
     <Content Include="index.html" />
   </ItemGroup>
   <ItemGroup>
