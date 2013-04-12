@@ -48,6 +48,8 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="chordgenerator.css" />
+    <Content Include="chordgenerator.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
