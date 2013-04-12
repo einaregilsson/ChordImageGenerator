@@ -55,14 +55,10 @@
       <DependentUpon>ChordHandler.ashx</DependentUpon>
     </Compile>
     <Compile Include="ChordBoxImage.cs" />
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ChordHandler.ashx" />
-    <Content Include="Global.asax" />
     <Content Include="index.html" />
   </ItemGroup>
   <ItemGroup>
