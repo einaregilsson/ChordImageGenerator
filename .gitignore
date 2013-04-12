@@ -1,7 +1,4 @@
-Chords.sln.cache
-Chords.4.5.resharper.user
-Chords.suo
-Chords.csproj.user
-_ReSharper.*
-bin/
-obj/
+bin/*
+obj/*
+*.suo
+*.user
