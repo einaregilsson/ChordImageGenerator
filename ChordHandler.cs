@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 using System;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -41,11 +42,13 @@ namespace EinarEgilsson.Chords
             var fingers = qs["fingers"] ?? qs["f"] ?? "------";
             var size = qs["size"] ?? qs["s"] ?? "1";
 
+            response.ContentType = "image/png";
+            response.Cache.SetCacheability(HttpCacheability.Public);
+            response.Cache.SetMaxAge(TimeSpan.FromDays(7));
+ 
             using (var img = new ChordBoxImage(chordName, pos, fingers, size))
             {
-                response.ContentType = "image/png";
-                response.ExpiresAbsolute = DateTime.Now.AddDays(7);
-                img.Save(context.Response.OutputStream);
+                img.Save(response.OutputStream);
             }
         }
 

@@ -8,9 +8,9 @@ body
 	font-family:  Arial, sans-serif; 
 	padding-top:20px;
 	background-image:-o-linear-gradient(top,#AFCFFE,#fff);
-	background-image:-webkit-linear-gradient(top,#AFCFFE,#fff);
+	background-image:-webkit-linear-gradient(top,#AFCFFE,$#fff);
 	background-image:-moz-linear-gradient(top,#AFCFFE,#fff);
-	background-image:linear-gradient(top,#AFCFFE,#fff);
+	background-image:linear-gradient(to bottom,#AFCFFE,#fff);
 	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#AFCFFE', endColorstr='#ffffff');            
 	margin:0;
     font-size:11pt;
@@ -54,6 +54,7 @@ img
 
 div#pagebox
 {
+    position:relative;
     color:#222;
 	border-radius:5px;
 	-moz-border-radius:5px;

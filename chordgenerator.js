@@ -99,6 +99,14 @@ function showChord() {
     var chordUrl = name + '.png?p=' + chord + '&f=' + fingers + '&s=' + size;
     var url = 'http://' + document.location.host + document.location.pathname.replace('index.html', '');
     url += chordUrl;
+
+    if (window.analyticsId) {
+        ga('send', 'pageview', {
+            'page': '/' + chordUrl,
+            'title': name + ': ' + chord
+        });
+    }
+
     document.location = '#' + chordUrl;
 
     $('chord-link').setAttribute('href', url);
