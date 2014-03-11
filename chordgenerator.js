@@ -65,6 +65,7 @@ function escapeName(name) {
 function unescapeName(name) {
     return name.replace(/%23/, '#').replace(/%2f/gi, '/');
 }
+
 /**
 * Shows a chord image based on the values in the textboxes.
 */
