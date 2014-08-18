@@ -276,14 +276,26 @@ namespace EinarEgilsson.Chords {
                 }
             }
 
-            Pen pen = new Pen(_foregroundBrush, _lineWidth * 3);
             float totalFretWidth = _fretWidth + _lineWidth;
-            foreach (Bar bar in bars.Values) {
-                float xstart = _xstart + bar.Str * totalFretWidth;
-                float xend = xstart + bar.Length * totalFretWidth;
-                float y = _ystart + (bar.Pos - _baseFret + 1) * totalFretWidth - (totalFretWidth / 2);
-                pen = new Pen(_foregroundBrush, _dotWidth / 2);
-                _graphics.DrawLine(pen, xstart, y, xend, y);
+            float arcWidth = _dotWidth / 7;
+            foreach (Bar bar in bars.Values) {                
+                float yTempOffset = 0.0f;
+                
+                if (bar.Pos == 1) {  // the bar must go a little higher in order to be shown correctly
+                    yTempOffset = - 0.3f * totalFretWidth ;
+                }
+
+                float xstart = _xstart + bar.Str * totalFretWidth - (_dotWidth / 2);
+                float y = _ystart + (bar.Pos - _baseFret) * totalFretWidth - (0.6f * totalFretWidth) + yTempOffset;
+                Pen pen = new Pen(_foregroundBrush, arcWidth);
+                Pen pen2 = new Pen(_foregroundBrush, 1.3f * arcWidth);
+                //_graphics.DrawLine(pen, xstart, y, xend, y);
+
+                float barWidth = bar.Length * totalFretWidth + _dotWidth;
+
+                _graphics.DrawArc(pen, xstart, y, barWidth, totalFretWidth, -1, -178);
+                _graphics.DrawArc(pen2, xstart, y - arcWidth, barWidth, totalFretWidth + arcWidth, -4, -172);
+                _graphics.DrawArc(pen2, xstart, y - 1.5f * arcWidth, barWidth, totalFretWidth + 3 * arcWidth, -20, -150);
             }
         }
 
