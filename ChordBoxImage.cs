@@ -276,14 +276,26 @@ namespace EinarEgilsson.Chords {
                 }
             }
 
-            Pen pen = new Pen(_foregroundBrush, _lineWidth * 3);
             float totalFretWidth = _fretWidth + _lineWidth;
-            foreach (Bar bar in bars.Values) {
-                float xstart = _xstart + bar.Str * totalFretWidth;
-                float xend = xstart + bar.Length * totalFretWidth;
-                float y = _ystart + (bar.Pos - _baseFret + 1) * totalFretWidth - (totalFretWidth / 2);
-                pen = new Pen(_foregroundBrush, _dotWidth / 2);
-                _graphics.DrawLine(pen, xstart, y, xend, y);
+            float arcWidth = _dotWidth / 7;
+            foreach (Bar bar in bars.Values) {                
+                float yTempOffset = 0.0f;
+                
+                if (bar.Pos == 1) {  // the bar must go a little higher in order to be shown correctly
+                    yTempOffset = - 0.3f * totalFretWidth ;
+                }
+
+                float xstart = _xstart + bar.Str * totalFretWidth - (_dotWidth / 2);
+                float y = _ystart + (bar.Pos - _baseFret) * totalFretWidth - (0.6f * totalFretWidth) + yTempOffset;
+                Pen pen = new Pen(_foregroundBrush, arcWidth);
+                Pen pen2 = new Pen(_foregroundBrush, 1.3f * arcWidth);
+                //_graphics.DrawLine(pen, xstart, y, xend, y);
+
+                float barWidth = bar.Length * totalFretWidth + _dotWidth;
+
+                _graphics.DrawArc(pen, xstart, y, barWidth, totalFretWidth, -1, -178);
+                _graphics.DrawArc(pen2, xstart, y - arcWidth, barWidth, totalFretWidth + arcWidth, -4, -172);
+                _graphics.DrawArc(pen2, xstart, y - 1.5f * arcWidth, barWidth, totalFretWidth + 3 * arcWidth, -20, -150);
             }
         }
 
@@ -335,27 +347,57 @@ namespace EinarEgilsson.Chords {
         }
 
         private void DrawChordName() {
-
             Font nameFont = new Font(FONT_NAME, _nameFontSize, GraphicsUnit.Pixel);
             Font superFont = new Font(FONT_NAME, _superScriptFontSize, GraphicsUnit.Pixel);
-            String name, super;
-            if (_chordName.IndexOf('_') == -1) {
-                name = _chordName;
-                super = "";
-            } else {
-                string[] parts = _chordName.Split('_');
-                name = parts[0];
-                super = parts[1];
-            }
-            SizeF stringSize = _graphics.MeasureString(name, nameFont);
-
+            string[] parts = _chordName.Split('_');
             float xTextStart = _xstart;
-            if (stringSize.Width < _boxWidth) {
-                xTextStart = _xstart + ((_boxWidth - stringSize.Width) / 2f);
+
+            //Set max parts to 4 for protection
+            int maxParts = parts.Length;
+            if ( maxParts > 4 ) {
+                maxParts = 4;
             }
-            _graphics.DrawString(name, nameFont, _foregroundBrush, xTextStart, 0.2f * _superScriptFontSize);
-            if (super != "") {
-                _graphics.DrawString(super, superFont, _foregroundBrush, xTextStart + 0.8f * stringSize.Width, 0);
+
+            //count total width of the chord in pixels
+            float chordNameSize = 0;
+            for (int i = 0; i < maxParts; i++)
+            {
+                if (i % 2 == 0) {  //odd parts are normal text
+                    SizeF stringSize2 = _graphics.MeasureString(parts[i], nameFont);
+                    chordNameSize += 0.75f * stringSize2.Width;
+                }
+                else {    //even parts are superscipts
+                    SizeF stringSize2 = _graphics.MeasureString(parts[i], superFont);
+                    chordNameSize += 0.8f * stringSize2.Width;
+                }
+            }
+
+            //set the x position for the chord name
+            if (chordNameSize < _boxWidth) {
+                xTextStart = _xstart + ((_boxWidth - chordNameSize) / 2f);
+            }
+            else if((xTextStart + chordNameSize) > _imageWidth ) {   // if it goes outside the boundaries
+                float nx = (xTextStart + chordNameSize) / 2f;
+                if (nx < _imageWidth / 2) {                         // if it can fit inside the image
+                    xTextStart = (_imageWidth / 2) - nx;
+                }
+                else {
+                    xTextStart = 2f;
+                }
+            }
+
+            // Paint the chord
+            for (int i = 0; i < maxParts; i++) {
+                if (i % 2 == 0) {
+                    SizeF stringSize2 = _graphics.MeasureString(parts[i], nameFont);
+                    _graphics.DrawString(parts[i], nameFont, _foregroundBrush, xTextStart, 0.2f * _superScriptFontSize);
+                    xTextStart += 0.75f * stringSize2.Width;
+                }
+                else {
+                    SizeF stringSize2 = _graphics.MeasureString(parts[i], superFont);
+                    _graphics.DrawString(parts[i], superFont, _foregroundBrush, xTextStart, 0);
+                    xTextStart += 0.8f * stringSize2.Width;
+                }
             }
 
             if (_baseFret > 1) {
