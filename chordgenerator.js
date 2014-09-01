@@ -46,14 +46,36 @@ function parseChord(chord) {
     var p = (chord.match(/p(os)?=([^&]+)/) || {})[2];
     var f = (chord.match(/f(ingers)?=([^&]+)/) || {})[2];
     var s = (chord.match(/s(ize)?=([^&]+)/) || {})[2];
+
+    var doubleDigit = true;
+    var tempParts;
+
+    if (p) {
+        if (p.indexOf('-') === -1) {
+            doubleDigit = false;
+        }
+        else {
+            var tempParts = p.split("-");
+            if (tempParts.length < 6) {
+                doubleDigit = false;
+            }
+        }
+    }
+
     for (var i = 0; i < 6; i++) {
         if (f) {
             fingers[i].value = f.charAt(i);
         }
         if (p) {
-            positions[i].value = p.charAt(i);
+            if (!doubleDigit) {
+                positions[i].value = p.charAt(i);
+            }
+            else {
+                positions[i].value = tempParts[i];
+            }
         }
     }
+
     $('size').value = s || '2';
     showChord();
 }
