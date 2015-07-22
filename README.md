@@ -18,5 +18,5 @@ There is a small example website at [http://chordgenerator.net](http://chordgene
 
 There is nothing web specific about the actual image generation. It can be saved to any stream so you could just as easily use it in a desktop application.
 
-The source is licensed under the GPL. You are also free to link directly to chordgenerator.net, although I give no guarantees about uptime or reliability.
+The source is licensed under the MIT License. You are also free to link directly to chordgenerator.net, although I give no guarantees about uptime or reliability.
 
