@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace EinarEgilsson.ChordImages
@@ -28,12 +29,14 @@ namespace EinarEgilsson.ChordImages
 
         private readonly Playstyle[] _chordPositions = new Playstyle[6];
         private readonly Regex _chordRegex = new Regex(@"[\dxX]{6}|((1|2)?[\dxX]-){5}(1|2)?[\dxX]", RegexOptions.Compiled);
+        private string[] _splitString;
 
         #endregion
 
         #region Properties
 
-        internal string Name { get; }
+        internal string Name { get { return string.Join("_", _splitString); } }
+        internal string[] SplitName { get { return _splitString; } }
         internal bool ParseError { get; private set; }
         internal int Length { get { return _chordPositions.Length; } }
         internal int BaseFret { get; private set; }
@@ -44,7 +47,7 @@ namespace EinarEgilsson.ChordImages
 
         internal Chord(string name, string chord)
         {
-            Name = ParseName(name);
+            _splitString = ParseName(name);
             ParseChord(chord);
         }
 
@@ -52,9 +55,42 @@ namespace EinarEgilsson.ChordImages
 
         #region Parsing
 
-        private string ParseName(string name)
+        private string[] ParseName(string name)
         {
-            return (name == null) ? "" : name.Replace(" ", "");
+            if (string.IsNullOrEmpty(name))
+            {
+                return new[] { "" };
+            }
+            var splitString = name.Split('_');
+            for (int i = 1; i < splitString.Length; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    continue;
+                }
+                splitString[i] = ConvertSharpSign(splitString[i]);
+                splitString[i] = ConvertFlatSign(splitString[i]);
+            }
+            return splitString.ToArray();
+        }
+
+        private static string ConvertSharpSign(string name)
+        {
+            if (name.Length > 1)
+            {
+                return name;
+            }
+            return name.Replace("#", "\u266f");
+        }
+
+        private static string ConvertFlatSign(string name)
+        {
+            if (name.Length > 1)
+            {
+                return name;
+            }
+            name = name.Replace("b", "\u266d");
+            return name.Replace("B", "\u266d");
         }
 
         private void ParseChord(string chord)
