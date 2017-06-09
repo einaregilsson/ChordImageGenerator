@@ -23,24 +23,19 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Text.RegularExpressions;
 
-namespace EinarEgilsson.ChordImages {
+namespace EinarEgilsson.ChordImages
+{
 
     /// <summary>
     /// Class to create images of chordboxes. Can be saved
     /// to any subclass of Stream.
     /// </summary>
-    public class ChordBoxImage : IDisposable {
+    public class ChordBoxImage : IDisposable
+    {
 
         #region Constants
 
-        const char NO_FINGER = '-';
-        const char THUMB = 'T';
-        const char INDEX_FINGER = '1';
-        const char MIDDLE_FINGER = '2';
-        const char RING_FINGER = '3';
-        const char LITTLE_FINGER = '4';
 
         const int FRET_COUNT = 5;
         const string FONT_NAME = "Arial";
@@ -51,10 +46,10 @@ namespace EinarEgilsson.ChordImages {
         private Bitmap _bitmap;
         private Graphics _graphics;
 
+        private Chord _chord;
+        private Fingers _fingers;
+
         private int _size;
-        private char[] _fingers = new char[] { NO_FINGER, NO_FINGER, NO_FINGER,
-                                             NO_FINGER, NO_FINGER, NO_FINGER};
-        private string _chordName;
         private bool _error;
 
         private float _fretWidth;
@@ -82,16 +77,14 @@ namespace EinarEgilsson.ChordImages {
         private Brush _foregroundBrush = Brushes.Black;
         private Brush _backgroundBrush = Brushes.White;
 
-        private Chord _chord;
-
         #endregion
 
         #region Constructor
 
-        public ChordBoxImage(string name, string chordString, string fingers, string size) {
-            _chordName = (name == null) ? "" : name.Replace(" ", "");
+        public ChordBoxImage(string name, string chordString, string fingers, string size)
+        {
             _chord = new Chord(name, chordString);
-            ParseFingers(fingers);
+            _fingers = new Fingers(fingers);
             ParseSize(size);
             InitializeSizes();
             CreateImage();
@@ -101,7 +94,8 @@ namespace EinarEgilsson.ChordImages {
 
         #region Public methods
 
-        public void Save(Stream output) {
+        public void Save(Stream output)
+        {
             _bitmap.Save(output, ImageFormat.Png);
         }
 
@@ -114,7 +108,8 @@ namespace EinarEgilsson.ChordImages {
         }
 
 
-        public void Dispose() {
+        public void Dispose()
+        {
             _bitmap.Dispose();
             _graphics.Dispose();
         }
@@ -123,7 +118,8 @@ namespace EinarEgilsson.ChordImages {
 
         #region Private methods
 
-        private void InitializeSizes() {
+        private void InitializeSizes()
+        {
             _fretWidth = 4 * _size;
             _nutHeight = _fretWidth / 2f;
             _lineWidth = (int)Math.Ceiling(_size * 0.31);
@@ -139,7 +135,8 @@ namespace EinarEgilsson.ChordImages {
             _fingerFontSize = _fretWidth * 0.8f;
             _nameFontSize = _fretWidth * 2f / perc;
             _superScriptFontSize = 0.7f * _nameFontSize;
-            if (_size == 1) {
+            if (_size == 1)
+            {
                 _nameFontSize += 2;
                 _fingerFontSize += 2;
                 _fretFontSize += 2;
@@ -147,7 +144,7 @@ namespace EinarEgilsson.ChordImages {
             }
 
             _xstart = _fretWidth;
-            _ystart = (float) Math.Round(0.2f * _superScriptFontSize + _nameFontSize + _nutHeight + 1.7f * _markerWidth);
+            _ystart = (float)Math.Round(0.2f * _superScriptFontSize + _nameFontSize + _nutHeight + 1.7f * _markerWidth);
 
             _imageWidth = (int)(_boxWidth + 5 * _fretWidth);
             _imageHeight = (int)(_boxHeight + _ystart + _fretWidth + _fretWidth);
@@ -156,41 +153,42 @@ namespace EinarEgilsson.ChordImages {
             _signRadius = _signWidth / 2;
         }
 
-        private void ParseSize(string size) {
-            if (size == null) {
+        private void ParseSize(string size)
+        {
+            if (size == null)
+            {
                 _size = 1;
-            } else {
+            }
+            else
+            {
                 double dsize;
-                if (double.TryParse(size, out dsize)) {
+                if (double.TryParse(size, out dsize))
+                {
                     dsize = Math.Round(dsize, 0);
                     _size = Convert.ToInt32(Math.Min(Math.Max(1, dsize), 10));
-                } else {
+                }
+                else
+                {
                     _size = 1;
                 }
             }
         }
 
-        private void ParseFingers(string fingers) {
-            if (fingers == null) {
-                return; //Allowed to not specify fingers
-            } else if (!Regex.IsMatch(fingers, @"[tT\-1234]{6}")) {
-                _error = true;
-            } else {
-                _fingers = fingers.ToUpper().ToCharArray();
-            }
-        }
-
-        private void CreateImage() {
+        private void CreateImage()
+        {
             _bitmap = new Bitmap(_imageWidth, _imageHeight);
             _graphics = Graphics.FromImage(_bitmap);
             _graphics.SmoothingMode = SmoothingMode.HighQuality;
             _graphics.FillRectangle(_backgroundBrush, 0, 0, _bitmap.Width, _bitmap.Height);
-            if (_error) {
+            if (_error)
+            {
                 //Draw red x
                 var errorPen = new Pen(Color.Red, 3f);
                 _graphics.DrawLine(errorPen, 0f, 0f, _bitmap.Width, _bitmap.Height);
                 _graphics.DrawLine(errorPen, 0f, _bitmap.Height, _bitmap.Width, 0);
-            } else {
+            }
+            else
+            {
                 DrawChordBox();
                 DrawChordPositions();
                 DrawChordName();
@@ -199,40 +197,50 @@ namespace EinarEgilsson.ChordImages {
             }
         }
 
-        private void DrawChordBox() {
+        private void DrawChordBox()
+        {
             var pen = new Pen(_foregroundBrush, _lineWidth);
             float totalFretWidth = _fretWidth + _lineWidth;
 
-            for (int i = 0; i <= FRET_COUNT; i++) {
+            for (int i = 0; i <= FRET_COUNT; i++)
+            {
                 float y = _ystart + i * totalFretWidth;
                 _graphics.DrawLine(pen, _xstart, y, _xstart + _boxWidth - _lineWidth, y);
             }
 
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 6; i++)
+            {
                 float x = _xstart + (i * totalFretWidth);
                 _graphics.DrawLine(pen, x, _ystart, x, _ystart + _boxHeight - pen.Width);
             }
 
-            if (_chord.NeedToDrawNut()) {
+            if (_chord.NeedToDrawNut())
+            {
                 //Need to draw the nut
                 float nutHeight = _fretWidth / 2f;
                 _graphics.FillRectangle(_foregroundBrush, _xstart - _lineWidth / 2f, _ystart - nutHeight, _boxWidth, nutHeight);
             }
         }
 
-        private struct Bar { public int Str, Pos, Length; public char Finger; }
+        private struct Bar { public int Str, Pos, Length; public Finger Finger; }
 
-        private void DrawBars() {
-            var bars = new Dictionary<char, Bar>();
-            for (int i = 0; i < 5; i++) {
-                if (!_chord.MutedAt(i) && !_chord.OpenAt(i) && _fingers[i] != NO_FINGER && !bars.ContainsKey(_fingers[i])) {
-                    var bar = new Bar { Str = i, Pos = _chord.PlaystyleAsIntAt(i), Length = 0, Finger = _fingers[i] };
-                    for (int j = i + 1; j < 6; j++) {
-                        if (_fingers[j] == bar.Finger && _chord.PlaystyleAsIntAt(j) == _chord.PlaystyleAsIntAt(i)) {
+        private void DrawBars()
+        {
+            var bars = new Dictionary<Finger, Bar>();
+            for (int i = 0; i < 5; i++)
+            {
+                if (!_chord.MutedAt(i) && !_chord.OpenAt(i) && _fingers.IsFingerAt(i) && !bars.ContainsKey(_fingers.FingerAt(i)))
+                {
+                    var bar = new Bar { Str = i, Pos = _chord.PlaystyleAsIntAt(i), Length = 0, Finger = _fingers.FingerAt(i) };
+                    for (int j = i + 1; j < 6; j++)
+                    {
+                        if (_fingers.FingerAt(j) == bar.Finger && _chord.PlaystyleAsIntAt(j) == _chord.PlaystyleAsIntAt(i))
+                        {
                             bar.Length = j - i;
                         }
                     }
-                    if (bar.Length > 0) {
+                    if (bar.Length > 0)
+                    {
                         bars.Add(bar.Finger, bar);
                     }
                 }
@@ -240,11 +248,13 @@ namespace EinarEgilsson.ChordImages {
 
             float totalFretWidth = _fretWidth + _lineWidth;
             float arcWidth = _dotWidth / 7;
-            foreach (Bar bar in bars.Values) {
+            foreach (Bar bar in bars.Values)
+            {
                 float yTempOffset = 0.0f;
 
-                if (bar.Pos == 1) {  // the bar must go a little higher in order to be shown correctly
-                    yTempOffset = - 0.3f * totalFretWidth ;
+                if (bar.Pos == 1)
+                {  // the bar must go a little higher in order to be shown correctly
+                    yTempOffset = -0.3f * totalFretWidth;
                 }
 
                 float xstart = _xstart + bar.Str * totalFretWidth - (_dotWidth / 2);
@@ -261,32 +271,41 @@ namespace EinarEgilsson.ChordImages {
             }
         }
 
-        private void DrawChordPositions() {
+        private void DrawChordPositions()
+        {
             float yoffset = _ystart - _fretWidth;
             float xoffset = _lineWidth / 2f;
             float totalFretWidth = _fretWidth + _lineWidth;
             float xfirstString = _xstart + 0.5f * _lineWidth;
-            for (int i = 0; i < _chord.Length; i++) {
+            for (int i = 0; i < _chord.Length; i++)
+            {
                 var absolutePos = _chord.PlaystyleAt(i);
                 int relativePos = (int)absolutePos - _chord.BaseFret + 1;
 
                 float xpos = _xstart - (0.5f * _fretWidth) + (0.5f * _lineWidth) + (i * totalFretWidth);
-                if (relativePos > 0) {
+                if (relativePos > 0)
+                {
                     float ypos = relativePos * totalFretWidth + yoffset;
                     _graphics.FillEllipse(_foregroundBrush, xpos, ypos, _dotWidth, _dotWidth);
-                } else if (absolutePos == Playstyle.Open) {
+                }
+                else if (absolutePos == Playstyle.Open)
+                {
                     var pen = new Pen(_foregroundBrush, _lineWidth);
                     float ypos = _ystart - _fretWidth;
                     float markerXpos = xpos + ((_dotWidth - _markerWidth) / 2f);
-                    if (_chord.NeedToDrawNut()) {
+                    if (_chord.NeedToDrawNut())
+                    {
                         ypos -= _nutHeight;
                     }
                     _graphics.DrawEllipse(pen, markerXpos, ypos, _markerWidth, _markerWidth);
-                } else if (absolutePos == Playstyle.Muted) {
+                }
+                else if (absolutePos == Playstyle.Muted)
+                {
                     var pen = new Pen(_foregroundBrush, _lineWidth * 1.5f);
                     float ypos = _ystart - _fretWidth;
                     float markerXpos = xpos + ((_dotWidth - _markerWidth) / 2f);
-                    if (_chord.NeedToDrawNut()) {
+                    if (_chord.NeedToDrawNut())
+                    {
                         ypos -= _nutHeight;
                     }
                     _graphics.DrawLine(pen, markerXpos, ypos, markerXpos + _markerWidth, ypos + _markerWidth);
@@ -295,28 +314,33 @@ namespace EinarEgilsson.ChordImages {
             }
         }
 
-        private void DrawFingers() {
+        private void DrawFingers()
+        {
             var xpos = _xstart + (0.5f * _lineWidth);
             var ypos = _ystart + _boxHeight;
             var font = new Font(FONT_NAME, _fingerFontSize);
-            foreach (char finger in _fingers) {
-                if (finger != NO_FINGER) {
-                    SizeF charSize = _graphics.MeasureString(finger.ToString(), font);
-                    _graphics.DrawString(finger.ToString(), font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
+            for (int i = 0; i < _fingers.FingerPositions.Length; i++)
+            {
+                if (_fingers.IsFingerAt(i))
+                {
+                    SizeF charSize = _graphics.MeasureString(_fingers.PrintAt(i), font);
+                    _graphics.DrawString(_fingers.PrintAt(i), font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
                 }
                 xpos += (_fretWidth + _lineWidth);
             }
         }
 
-        private void DrawChordName() {
+        private void DrawChordName()
+        {
             var nameFont = new Font(FONT_NAME, _nameFontSize, GraphicsUnit.Pixel);
             var superFont = new Font(FONT_NAME, _superScriptFontSize, GraphicsUnit.Pixel);
-            string[] parts = _chordName.Split('_');
+            string[] parts = _chord.Name.Split('_');
             float xTextStart = _xstart;
 
             //Set max parts to 4 for protection
             int maxParts = parts.Length;
-            if ( maxParts > 4 ) {
+            if (maxParts > 4)
+            {
                 maxParts = 4;
             }
 
@@ -324,45 +348,55 @@ namespace EinarEgilsson.ChordImages {
             float chordNameSize = 0;
             for (int i = 0; i < maxParts; i++)
             {
-                if (i % 2 == 0) {  //odd parts are normal text
+                if (i % 2 == 0)
+                {  //odd parts are normal text
                     SizeF stringSize2 = _graphics.MeasureString(parts[i], nameFont);
                     chordNameSize += 0.75f * stringSize2.Width;
                 }
-                else {    //even parts are superscipts
+                else
+                {    //even parts are superscipts
                     SizeF stringSize2 = _graphics.MeasureString(parts[i], superFont);
                     chordNameSize += 0.8f * stringSize2.Width;
                 }
             }
 
             //set the x position for the chord name
-            if (chordNameSize < _boxWidth) {
+            if (chordNameSize < _boxWidth)
+            {
                 xTextStart = _xstart + ((_boxWidth - chordNameSize) / 2f);
             }
-            else if((xTextStart + chordNameSize) > _imageWidth ) {   // if it goes outside the boundaries
+            else if ((xTextStart + chordNameSize) > _imageWidth)
+            {   // if it goes outside the boundaries
                 var nx = (xTextStart + chordNameSize) / 2f;
-                if (nx < _imageWidth / 2) {                         // if it can fit inside the image
+                if (nx < _imageWidth / 2)
+                {                         // if it can fit inside the image
                     xTextStart = (_imageWidth / 2) - nx;
                 }
-                else {
+                else
+                {
                     xTextStart = 2f;
                 }
             }
 
             // Paint the chord
-            for (int i = 0; i < maxParts; i++) {
-                if (i % 2 == 0) {
+            for (int i = 0; i < maxParts; i++)
+            {
+                if (i % 2 == 0)
+                {
                     var stringSize2 = _graphics.MeasureString(parts[i], nameFont);
                     _graphics.DrawString(parts[i], nameFont, _foregroundBrush, xTextStart, 0.2f * _superScriptFontSize);
                     xTextStart += 0.75f * stringSize2.Width;
                 }
-                else {
+                else
+                {
                     var stringSize2 = _graphics.MeasureString(parts[i], superFont);
                     _graphics.DrawString(parts[i], superFont, _foregroundBrush, xTextStart, 0);
                     xTextStart += 0.8f * stringSize2.Width;
                 }
             }
 
-            if (_chord.BaseFret > 1) {
+            if (_chord.BaseFret > 1)
+            {
                 var fretFont = new Font(FONT_NAME, _fretFontSize, GraphicsUnit.Pixel);
                 float offset = (fretFont.Size - _fretWidth) / 2f;
                 _graphics.DrawString(_chord.BaseFret + "fr", fretFont, _foregroundBrush, _xstart + _boxWidth + 0.3f * _fretWidth, _ystart - offset);

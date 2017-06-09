@@ -44,11 +44,18 @@ namespace EinarEgilsson.ChordImages
 
         internal Chord(string name, string chord)
         {
-            Name = name;
+            Name = ParseName(name);
             ParseChord(chord);
         }
 
         #endregion
+
+        #region Parsing
+
+        private string ParseName(string name)
+        {
+            return (name == null) ? "" : name.Replace(" ", "");
+        }
 
         private void ParseChord(string chord)
         {
@@ -74,17 +81,17 @@ namespace EinarEgilsson.ChordImages
                 int maxFret = 0, minFret = int.MaxValue;
                 for (int i = 0; i < 6; i++)
                 {
-                    if (string.Equals(parts[i],"X", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(parts[i], "X", StringComparison.OrdinalIgnoreCase))
                     {
                         _chordPositions[i] = Playstyle.Muted;
                     }
                     else
                     {
                         Enum.TryParse(parts[i], out _chordPositions[i]);
-                        maxFret = Math.Max(maxFret, (int) _chordPositions[i]);
+                        maxFret = Math.Max(maxFret, (int)_chordPositions[i]);
                         if (_chordPositions[i] != 0)
                         {
-                            minFret = Math.Min(minFret, (int) _chordPositions[i]);
+                            minFret = Math.Min(minFret, (int)_chordPositions[i]);
                         }
                     }
                 }
@@ -98,6 +105,8 @@ namespace EinarEgilsson.ChordImages
                 }
             }
         }
+
+        #endregion
 
         internal bool MutedAt(int pos)
         {

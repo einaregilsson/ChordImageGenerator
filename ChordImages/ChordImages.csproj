@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Chord.cs" />
     <Compile Include="ChordBoxImage.cs" />
+    <Compile Include="Fingers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
