@@ -26,7 +26,7 @@ namespace EinarEgilsson.ChordImages
     {
         #region Fields
 
-        private Playstyle[] _chordPositions = new Playstyle[6];
+        private readonly Playstyle[] _chordPositions = new Playstyle[6];
         private readonly Regex _chordRegex = new Regex(@"[\dxX]{6}|((1|2)?[\dxX]-){5}(1|2)?[\dxX]", RegexOptions.Compiled);
 
         #endregion

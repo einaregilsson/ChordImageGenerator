@@ -48,7 +48,7 @@ namespace EinarEgilsson.Chords
 
             using (var img = new ChordBoxImage(chordName, pos, fingers, size))
             {
-                img.Save(response.OutputStream);
+                img.SaveImage(response.OutputStream);
             }
         }
 

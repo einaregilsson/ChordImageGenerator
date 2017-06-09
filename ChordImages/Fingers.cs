@@ -110,7 +110,7 @@ namespace EinarEgilsson.ChordImages
             {
                 case 'T':
                 case 't':
-                    return Finger.Thumb;                
+                    return Finger.Thumb;
                 default:
                     var finger = Finger.None;
                     Enum.TryParse(new string(new[] { c }), out finger);
@@ -119,7 +119,7 @@ namespace EinarEgilsson.ChordImages
         }
     }
 
-    enum Finger
+    internal enum Finger
     {
         Thumb = -1,
         None = 0,
