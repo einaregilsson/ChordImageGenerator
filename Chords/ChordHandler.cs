@@ -17,8 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+using EinarEgilsson.ChordImages;
 using System;
-using System.IO;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -45,7 +45,7 @@ namespace EinarEgilsson.Chords
             response.ContentType = "image/png";
             response.Cache.SetCacheability(HttpCacheability.Public);
             response.Cache.SetMaxAge(TimeSpan.FromDays(7));
- 
+
             using (var img = new ChordBoxImage(chordName, pos, fingers, size))
             {
                 img.Save(response.OutputStream);

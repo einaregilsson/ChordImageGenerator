@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Web;
 
 namespace EinarEgilsson.Chords
@@ -17,7 +16,7 @@ namespace EinarEgilsson.Chords
 
         void BeginRequest(object sender, EventArgs e)
         {
-            HttpApplication application = (HttpApplication) sender;
+            var application = (HttpApplication) sender;
             HttpContext context = application.Context;
             if (context.Request.Url.Host == "www.chordgenerator.net")
             {
