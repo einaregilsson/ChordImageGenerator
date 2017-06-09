@@ -1,0 +1,111 @@
+﻿html 
+{
+	background-color:#fff; 
+}
+
+body
+{
+	font-family:  Arial, sans-serif; 
+	padding-top:20px;
+	background-image:linear-gradient(to bottom,#AFCFFE,#fff);
+	background-image:-o-linear-gradient(top,#AFCFFE,#fff);
+	background-image:-webkit-linear-gradient(top,#AFCFFE,$#fff);
+	background-image:-moz-linear-gradient(top,#AFCFFE,#fff);
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#AFCFFE', endColorstr='#ffffff');            
+	margin:0;
+    font-size:11pt;
+}
+
+table
+{
+    margin:auto;
+}
+
+a, a:visited
+{
+    text-decoration:none;
+    color:blue;
+}
+
+#footer 
+{
+    font-size:9pt;
+    text-align:center;
+    font-weight: bold;
+    margin: 10px auto 30px auto;
+}
+
+#chordname 
+{
+    width:100px;
+}
+
+img
+{
+    margin:10px auto;
+    display:block;
+    border:none;
+}
+
+#header h1
+{
+    color:White;
+}
+
+div#pagebox
+{
+    position:relative;
+    color:#222;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	-o-border-radius:5px;
+	-khtml-border-radius:5px;
+	border:solid 1px black;            
+    background-color:White;
+    min-height:500px;
+    margin:15px auto;
+    width:700px;
+    box-shadow:grey 0px 0px 6px;
+}
+
+h1 {
+    padding-top: 10px;
+}
+
+h1,h2,h3,h4,h5,h6 { text-align:center; }
+#wraptable td
+{
+    padding:20px;
+}
+
+#wraptable td table td
+{
+    padding:0px;
+}
+
+#positions, #fingers
+{
+    text-align:center;
+    margin:auto;
+}
+
+#positions input, #fingers input
+{
+    width:20px;
+    text-align:center;
+}
+
+#examples
+{
+    text-align:left;
+    width:400px;
+    border:dotted 0px black;
+    margin:20px auto;
+    padding:3px;
+}
+
+#chordimage
+{
+    text-align:center;
+}    
