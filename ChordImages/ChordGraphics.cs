@@ -338,42 +338,15 @@ namespace EinarEgilsson.ChordImages
             }
         }
 
-        private struct Bar { public int Str, Pos, Length; public Finger Finger; }
-
         private void DrawBars(Chord chord, Fingers fingers)
         {
-            var bars = new Dictionary<Finger, Bar>();
-            for (int i = 0; i < chord.Length; i++)
-            {
-                if (!chord.MutedAt(i) && !chord.OpenAt(i) && fingers.IsFingerAt(i) && !bars.ContainsKey(fingers.FingerAt(i)))
-                {
-                    var bar = CreateNewBar(chord, fingers, i);
-                    if (bar.Length > 0)
-                    {
-                        bars.Add(bar.Finger, bar);
-                    }
-                }
-            }
-
+            var bars = Bars.GetBars(chord, fingers);
             float totalFretWidth = _fretWidth + _lineWidth;
             float arcWidth = _dotWidth / 7;
-            foreach (Bar bar in bars.Values)
+            foreach (Bar bar in bars)
             {
                 DrawSingleBar(bar, chord.BaseFret, totalFretWidth, arcWidth);
             }
-        }
-
-        private Bar CreateNewBar(Chord chord, Fingers fingers, int i)
-        {
-            var bar = new Bar { Str = i, Pos = chord.PlaystyleAsIntAt(i), Length = 0, Finger = fingers.FingerAt(i) };
-            for (int j = i + 1; j < 6; j++)
-            {
-                if (fingers.FingerAt(j) == bar.Finger && chord.PlaystyleAsIntAt(j) == chord.PlaystyleAsIntAt(i))
-                {
-                    bar.Length = j - i;
-                }
-            }
-            return bar;
         }
 
         private void DrawSingleBar(Bar bar, int baseFret, float totalFretWidth, float arcWidth)

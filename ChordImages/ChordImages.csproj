@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bars.cs" />
     <Compile Include="Chord.cs" />
     <Compile Include="ChordBoxImage.cs" />
     <Compile Include="Fingers.cs" />
