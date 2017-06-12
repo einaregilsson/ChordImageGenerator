@@ -91,7 +91,7 @@ namespace EinarEgilsson.Chords {
         #region Constructor
 
         public ChordBoxImage(string name, string chord, string fingers, string size) {
-            _chordName = (name == null) ? "" : name.Replace(" ", "");
+            _chordName = ParseName(name);
             ParseChord(chord);
             ParseFingers(fingers);
             ParseSize(size);
@@ -159,6 +159,44 @@ namespace EinarEgilsson.Chords {
 
             _signWidth = (int)(_fretWidth * 0.75);
             _signRadius = _signWidth / 2;
+        }
+
+        private string ParseName(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return "";
+            }
+            var splitString = name.Split('_');
+            for (int i = 1; i < splitString.Length; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    continue;
+                }
+                splitString[i] = ConvertSharpSign(splitString[i]);
+                splitString[i] = ConvertFlatSign(splitString[i]);
+            }
+            return string.Join("_", splitString);
+        }
+
+        private static string ConvertSharpSign(string name)
+        {
+            if (name.Length > 1)
+            {
+                return name;
+            }
+            return name.Replace("#", "\u266f");
+        }
+
+        private static string ConvertFlatSign(string name)
+        {
+            if (name.Length > 1)
+            {
+                return name;
+            }
+            name = name.Replace("b", "\u266d");
+            return name.Replace("B", "\u266d");
         }
 
         private void ParseSize(string size) {
