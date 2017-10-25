@@ -122,6 +122,7 @@ namespace EinarEgilsson.Chords {
 
         public void Dispose() {
             _bitmap.Dispose();
+            _graphics.Dispose();
         }
 
         #endregion
