@@ -70,7 +70,7 @@ namespace EinarEgilsson.Chords {
         private float _ystart;
         private float _nutHeight;
 
-        private int _dotWidth;
+        private float _dotWidth;
         private float _signWidth;
         private float _signRadius;
 
@@ -133,7 +133,7 @@ namespace EinarEgilsson.Chords {
             _fretWidth = 4 * _size;
             _nutHeight = _fretWidth / 2f;
             _lineWidth = (int)Math.Ceiling(_size * 0.31);
-            _dotWidth = (int)Math.Ceiling(0.9 * _fretWidth);
+            _dotWidth = (float)Math.Ceiling(0.9 * _fretWidth);
             _markerWidth = 0.7f * _fretWidth;
             _boxWidth = 5 * _fretWidth + 6 * _lineWidth;
             _boxHeight = FRET_COUNT * (_fretWidth + _lineWidth) + _lineWidth;
@@ -417,8 +417,8 @@ namespace EinarEgilsson.Chords {
             }
             else if((xTextStart + chordNameSize) > _imageWidth ) {   // if it goes outside the boundaries
                 float nx = (xTextStart + chordNameSize) / 2f;
-                if (nx < _imageWidth / 2) {                         // if it can fit inside the image
-                    xTextStart = (_imageWidth / 2) - nx;
+                if (nx < _imageWidth / 2f) {                         // if it can fit inside the image
+                    xTextStart = (_imageWidth / 2f) - nx;
                 }
                 else {
                     xTextStart = 2f;
