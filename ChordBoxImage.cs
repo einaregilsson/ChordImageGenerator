@@ -272,6 +272,7 @@ namespace EinarEgilsson.Chords {
                 DrawChordName();
                 DrawFingers();      //Draws the text below the box specifying finger numbers
                 DrawBars();
+                DrawNotes();
             }
         }
 
@@ -372,11 +373,11 @@ namespace EinarEgilsson.Chords {
             }
         }
 
-        //Draws the text below the box specifying finger numbers
+        //Draws the text above the box specifying finger numbers
         private void DrawFingers() {
             float xpos = _xstart + (0.5f * _lineWidth);
             //float ypos = _ystart + _boxHeight;
-            float ypos = _ystart - _fretWidth;
+            float ypos = _ystart - _fretWidth - 1;
             if (_baseFret == 1)
             {
                 ypos -= _nutHeight + 2;
@@ -396,13 +397,46 @@ namespace EinarEgilsson.Chords {
                     else if (absolutePos == MUTED) {
                         SizeF charSize = _graphics.MeasureString("X", font);
                         _graphics.DrawString("X", font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
-
                     }
                 }
                 xpos += (_fretWidth + _lineWidth);
             }
         }
 
+        private void DrawNotes() {
+            float xpos = _xstart + (0.5f * _lineWidth);
+            float ypos = _ystart + _boxHeight;
+            Font font = new Font(FONT_NAME, _fingerFontSize-1);
+            for (int i = 0; i < _chordPositions.Length; i++) {
+                int absolutePos = _chordPositions[i];
+                if (absolutePos == MUTED)
+                {
+                    SizeF charSize = _graphics.MeasureString("X", font);
+                    _graphics.DrawString("X", font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
+                } else {
+                    String noteLetter = GetNoteLetter(i, absolutePos);
+                    SizeF charSize = _graphics.MeasureString(noteLetter, font);
+                    _graphics.DrawString(noteLetter, font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
+                }
+                xpos += (_fretWidth + _lineWidth);
+            }
+
+        }
+
+        private String GetNoteLetter(int stringnum, int fret) {
+            String[,] scale = new String[,] { { "E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#", "D", "D#"},
+                                              { "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"},
+                                              { "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#"},
+                                              { "G", "G#", "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#"},
+                                              { "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#"},
+                                              { "E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#", "D", "D#"}};
+            int realFret = fret;
+            if (realFret >= 12){
+                realFret = realFret % 12;
+            }
+            return scale[stringnum, realFret];
+        }
+    
         private void DrawChordName() {
             Font nameFont = new Font(FONT_NAME, _nameFontSize, GraphicsUnit.Pixel);
             Font superFont = new Font(FONT_NAME, _superScriptFontSize, GraphicsUnit.Pixel);
