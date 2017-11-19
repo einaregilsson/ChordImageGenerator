@@ -268,9 +268,9 @@ namespace EinarEgilsson.Chords {
                 _graphics.DrawLine(errorPen, 0f, _bitmap.Height, _bitmap.Width, 0);
             } else {
                 DrawChordBox();
-                DrawChordPositions();
+                DrawChordPositions(); //Seems to draw both the top text and the finger dots
                 DrawChordName();
-                DrawFingers();
+                DrawFingers();      //Draws the text below the box specifying finger numbers
                 DrawBars();
             }
         }
@@ -337,6 +337,7 @@ namespace EinarEgilsson.Chords {
             }
         }
 
+        //Seems to draw both the top text and the finger dots
         private void DrawChordPositions() {
             float yoffset = _ystart - _fretWidth;
             float xoffset = _lineWidth / 2f;
@@ -350,7 +351,7 @@ namespace EinarEgilsson.Chords {
                 if (relativePos > 0) {
                     float ypos = relativePos * totalFretWidth + yoffset;
                     _graphics.FillEllipse(_foregroundBrush, xpos, ypos, _dotWidth, _dotWidth);
-                } else if (absolutePos == OPEN) {
+                }/* else if (absolutePos == OPEN) {
                     Pen pen = new Pen(_foregroundBrush, _lineWidth);
                     float ypos = _ystart - _fretWidth;
                     float markerXpos = xpos + ((_dotWidth - _markerWidth) / 2f);
@@ -367,18 +368,36 @@ namespace EinarEgilsson.Chords {
                     }
                     _graphics.DrawLine(pen, markerXpos, ypos, markerXpos + _markerWidth, ypos + _markerWidth);
                     _graphics.DrawLine(pen, markerXpos, ypos + _markerWidth, markerXpos + _markerWidth, ypos);
-                }
+                } */
             }
         }
 
+        //Draws the text below the box specifying finger numbers
         private void DrawFingers() {
             float xpos = _xstart + (0.5f * _lineWidth);
-            float ypos = _ystart + _boxHeight;
+            //float ypos = _ystart + _boxHeight;
+            float ypos = _ystart - _fretWidth;
+            if (_baseFret == 1)
+            {
+                ypos -= _nutHeight + 2;
+            }
             Font font = new Font(FONT_NAME, _fingerFontSize);
-            foreach (char finger in _fingers) {
+            for(int i = 0; i < _fingers.Length; i++) {
+                char finger = _fingers[i];
                 if (finger != NO_FINGER) {
                     SizeF charSize = _graphics.MeasureString(finger.ToString(), font);
                     _graphics.DrawString(finger.ToString(), font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
+                } else {
+                    int absolutePos = _chordPositions[i];
+                    if (absolutePos == OPEN) {
+                        SizeF charSize = _graphics.MeasureString("O", font);
+                        _graphics.DrawString("O", font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
+                    }
+                    else if (absolutePos == MUTED) {
+                        SizeF charSize = _graphics.MeasureString("X", font);
+                        _graphics.DrawString("X", font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
+
+                    }
                 }
                 xpos += (_fretWidth + _lineWidth);
             }
