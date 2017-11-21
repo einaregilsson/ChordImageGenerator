@@ -273,6 +273,7 @@ namespace EinarEgilsson.Chords {
                 DrawFingers();      //Draws the text below the box specifying finger numbers
                 DrawBars();
                 DrawNotes();
+                DrawIntervals();
             }
         }
 
@@ -421,6 +422,93 @@ namespace EinarEgilsson.Chords {
                 xpos += (_fretWidth + _lineWidth);
             }
 
+        }
+
+        private void DrawIntervals()
+        {
+            float xpos = _xstart + (0.5f * _lineWidth);
+
+            Font font = new Font(FONT_NAME, _fingerFontSize - 1);
+            SizeF charSize = _graphics.MeasureString("X", font);
+            float charHeight = charSize.Height;
+            float ypos = _ystart + _boxHeight + charHeight;
+
+            for (int i = 0; i < _chordPositions.Length; i++)
+            {
+                int absolutePos = _chordPositions[i];
+                if (absolutePos != MUTED) {
+                    String rootNote = GetRootNoteFromChord(_chordName);
+                    String noteLetter = GetNoteLetter(i, absolutePos);
+                    String noteInterval = Chord.getInterval(_chordName, rootNote, noteLetter);
+                    
+                    SizeF charSizeIndividual = _graphics.MeasureString(noteInterval, font);
+                    _graphics.DrawString(noteInterval, font, _foregroundBrush, xpos - (0.5f * charSizeIndividual.Width), ypos);
+                }
+                xpos += (_fretWidth + _lineWidth);
+            }
+        }
+
+        private String GetRootNoteFromChord(String chord) {
+            System.Text.StringBuilder chordRoot = new System.Text.StringBuilder();
+            if (chord.Length < 1) {
+                return "";
+            }
+            chordRoot.Append(chord[0]);
+
+            if (chord.Length > 1) { 
+                char secondLetter = chord[1];
+                if (secondLetter == 'b' || secondLetter == '#')
+                {
+                    chordRoot.Append(secondLetter);
+                }
+            }
+            return chordRoot.ToString().ToUpper();
+        }
+
+        private String GetInterval(String rootNote, String secondNote) {
+            String[] scale = {"E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#", "D", "D#"};
+            int rootIndex = Array.IndexOf(scale, rootNote, 0);
+            String target = "";
+            int interval = 0;
+            int counter = 0;
+            while (!target.Equals(rootNote)) {
+                interval++;
+                counter++;
+                counter = counter % scale.Length;
+                target = scale[counter];
+            }
+
+            switch (interval)
+            {
+                case 0:
+                    return "r";
+                case 1: //b2, b9
+                    return "b2";
+                case 2:// 2, 9
+                    return "2";
+                case 3: // b3, #9
+                    return "b3";
+                case 4:
+                    return "3";
+                case 5: //4, 11
+                    return "4";
+                case 6: //b5, #11
+                    return "b5";
+                case 7:
+                    return "5";
+                case 8: // m6, 5#, +5, b13
+                    return "m6";
+                case 9: // 6, 13
+                    return "6"; 
+                case 10:
+                    return "b7";
+                case 11:
+                    return "7";
+                case 12:
+                    return "r";
+                default:
+                    return "?";
+            }
         }
 
         private String GetNoteLetter(int stringnum, int fret) {
