@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="ChordBoxImage.cs" />
     <Compile Include="ChordHandler.cs" />
+    <Compile Include="Chord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RedirectModule.cs" />
   </ItemGroup>

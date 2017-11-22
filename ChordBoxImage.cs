@@ -77,12 +77,17 @@ namespace EinarEgilsson.Chords {
         //Different font sizes
         private float _fretFontSize;
         private float _fingerFontSize;
+        private float _noteFontSize;
+        private float _intervalFontSize;
+
         private float _nameFontSize;
         private float _superScriptFontSize;
         private float _markerWidth;
 
         private Brush _foregroundBrush = Brushes.Black;
         private Brush _backgroundBrush = Brushes.White;
+
+        private int _verticalBufferSpace;
 
         private int _baseFret;
 
@@ -142,20 +147,26 @@ namespace EinarEgilsson.Chords {
             float perc = family.GetCellAscent(FontStyle.Regular) / (float)family.GetLineSpacing(FontStyle.Regular);
             _fretFontSize = _fretWidth / perc;
             _fingerFontSize = _fretWidth * 0.8f;
+            _intervalFontSize = _fingerFontSize - 1;
+            _noteFontSize = _fretWidth * 0.6f;
             _nameFontSize = _fretWidth * 2f / perc;
             _superScriptFontSize = 0.7f * _nameFontSize;
             if (_size == 1) {
                 _nameFontSize += 2;
                 _fingerFontSize += 2;
+                _intervalFontSize += 2;
+                _noteFontSize += 2;
                 _fretFontSize += 2;
                 _superScriptFontSize += 2;
             }
 
+            _verticalBufferSpace = 10;
+
             _xstart = _fretWidth;
-            _ystart = (float) Math.Round(0.2f * _superScriptFontSize + _nameFontSize + _nutHeight + 1.7f * _markerWidth);
+            _ystart = (float) Math.Round(0.2f * _superScriptFontSize + _nameFontSize + _noteFontSize + _intervalFontSize + _fingerFontSize + _nutHeight + 1.7f * _markerWidth);
 
             _imageWidth = (int)(_boxWidth + 5 * _fretWidth);
-            _imageHeight = (int)(_boxHeight + _ystart + _fretWidth + _fretWidth);
+            _imageHeight = (int)(_boxHeight + _ystart + _fretWidth + _fretWidth + _verticalBufferSpace);
 
             _signWidth = (int)(_fretWidth * 0.75);
             _signRadius = _signWidth / 2;
@@ -407,28 +418,24 @@ namespace EinarEgilsson.Chords {
         private void DrawNotes() {
             float xpos = _xstart + (0.5f * _lineWidth);
             float ypos = _ystart + _boxHeight;
-            Font font = new Font(FONT_NAME, _fingerFontSize-1);
+            Font font = new Font(FONT_NAME, _noteFontSize);
             for (int i = 0; i < _chordPositions.Length; i++) {
                 int absolutePos = _chordPositions[i];
-                if (absolutePos == MUTED)
+                if (absolutePos != MUTED)
                 {
-                    SizeF charSize = _graphics.MeasureString("X", font);
-                    _graphics.DrawString("X", font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
-                } else {
                     String noteLetter = GetNoteLetter(i, absolutePos);
                     SizeF charSize = _graphics.MeasureString(noteLetter, font);
                     _graphics.DrawString(noteLetter, font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
                 }
                 xpos += (_fretWidth + _lineWidth);
             }
-
         }
 
         private void DrawIntervals()
         {
             float xpos = _xstart + (0.5f * _lineWidth);
 
-            Font font = new Font(FONT_NAME, _fingerFontSize - 1);
+            Font font = new Font(FONT_NAME, _intervalFontSize);
             SizeF charSize = _graphics.MeasureString("X", font);
             float charHeight = charSize.Height;
             float ypos = _ystart + _boxHeight + charHeight;
