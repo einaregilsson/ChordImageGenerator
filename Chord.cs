@@ -2,16 +2,54 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Text.RegularExpressions;
 
 namespace EinarEgilsson.Chords
 {
     public class Chord
     {
         String Name { get; set; }
-        private int[] _chordPositions = new int[6];
+        const char NO_FINGER = '-';
+        const char THUMB = 'T';
+        const char INDEX_FINGER = '1';
+        const char MIDDLE_FINGER = '2';
+        const char RING_FINGER = '3';
+        const char LITTLE_FINGER = '4';
+        const int OPEN = 0;
+        const int MUTED = -1;
+        const int FRET_COUNT = 5;
 
-        public Chord(String name) {
-            Name = name;
+        public enum FrettingMode {Muted = -1, Open = 0}
+
+        public int NumberOfStrings { get; } = 6;
+
+        private int[] _chordPositions;
+        private char[] _fingers = new char[] { NO_FINGER, NO_FINGER, NO_FINGER,
+                                             NO_FINGER, NO_FINGER, NO_FINGER};
+        private int _baseFret;
+
+        private bool _error;
+
+        public Chord(String name = "", String parseString = "", String fingers = "") {
+            _chordPositions = new int[NumberOfStrings];
+
+            if (parseString != null && !"".Equals(parseString))
+            {               
+                ParseChord(parseString);
+            }
+            if (parseString != null && !"".Equals(parseString))
+            {
+                Name = ParseName(name);
+            }
+            if (fingers != null && !"".Equals(fingers))
+            {
+                ParseFingers(fingers);
+            }
+        }
+
+        public Chord parseChordFromString(String chordString) {
+            Chord newChord = new Chord(ParseName(chordString));
+            return newChord;
         }
 
         public String getRootNote() {
@@ -86,17 +124,7 @@ namespace EinarEgilsson.Chords
             }
         }
 
-        private static String returnFirstMatch(String chordName, String[] possibleNoteNames) {
-            foreach(String note in possibleNoteNames) {
-                if (chordName.Contains(note)) {
-                    return note;
-                }
-            }
-            return possibleNoteNames.Last(); // last element as default
-        }
-
-        public static String GetNoteLetter(int stringnum, int fret)
-        {
+        public static String GetNoteLetter(int stringnum, int fret) {
             String[,] scale = new String[,] { { "E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#", "D", "D#"},
                                               { "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"},
                                               { "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#"},
@@ -110,5 +138,126 @@ namespace EinarEgilsson.Chords
             }
             return scale[stringnum, realFret];
         }
+
+        public int getFretNumberOnString(int stringNumber)
+        {
+            return _chordPositions[stringNumber];
+        }
+
+        private static String returnFirstMatch(String chordName, String[] possibleNoteNames)
+        {
+            foreach (String note in possibleNoteNames)
+            {
+                if (chordName.Contains(note))
+                {
+                    return note;
+                }
+            }
+            return possibleNoteNames.Last(); // last element as default
+        }
+
+        private string ParseName(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return "";
+            }
+            var splitString = name.Split('_');
+            for (int i = 1; i < splitString.Length; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    continue;
+                }
+                splitString[i] = ConvertSharpSign(splitString[i]);
+                splitString[i] = ConvertFlatSign(splitString[i]);
+            }
+            return string.Join("_", splitString);
+        }
+
+        private static string ConvertSharpSign(string name)
+        {
+            if (name.Length > 1)
+            {
+                return name;
+            }
+            return name.Replace("#", "\u266f");
+        }
+
+        private static string ConvertFlatSign(string name)
+        {
+            if (name.Length > 1)
+            {
+                return name;
+            }
+            name = name.Replace("b", "\u266d");
+            return name.Replace("B", "\u266d");
+        }
+
+        private void ParseChord(string chord)
+        {
+            if (chord == null || !Regex.IsMatch(chord, @"[\dxX]{6}|((1|2)?[\dxX]-){5}(1|2)?[\dxX]"))
+            {
+                _error = true;
+            }
+            else
+            {
+                string[] parts;
+                if (chord.Length > 6)
+                {
+                    parts = chord.Split('-');
+                }
+                else
+                {
+                    parts = new string[6];
+                    for (int i = 0; i < 6; i++)
+                    {
+                        parts[i] = chord[i].ToString();
+                    }
+                }
+                int maxFret = 0, minFret = int.MaxValue;
+                for (int i = 0; i < 6; i++)
+                {
+                    if (parts[i].ToUpper() == "X")
+                    {
+                        _chordPositions[i] = MUTED;
+                    }
+                    else
+                    {
+                        _chordPositions[i] = int.Parse(parts[i]);
+                        maxFret = Math.Max(maxFret, _chordPositions[i]);
+                        if (_chordPositions[i] != 0)
+                        {
+                            minFret = Math.Min(minFret, _chordPositions[i]);
+                        }
+                    }
+                }
+                if (maxFret <= 5)
+                {
+                    _baseFret = 1;
+                }
+                else
+                {
+                    _baseFret = minFret;
+                }
+            }
+        }
+
+        private void ParseFingers(string fingers)
+        {
+            if (fingers == null)
+            {
+                return; //Allowed to not specify fingers
+            }
+            else if (!Regex.IsMatch(fingers, @"[tT\-1234]{6}"))
+            {
+                _error = true;
+            }
+            else
+            {
+                _fingers = fingers.ToUpper().ToCharArray();
+            }
+        }
+
     }
 }

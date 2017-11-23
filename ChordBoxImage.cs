@@ -58,6 +58,7 @@ namespace EinarEgilsson.Chords {
                                              NO_FINGER, NO_FINGER, NO_FINGER};
         private string _chordName;
         private bool _error;
+        private Chord _chord;
 
         private float _fretWidth;
         private int _lineWidth;
@@ -99,6 +100,8 @@ namespace EinarEgilsson.Chords {
             _chordName = ParseName(name);
             ParseChord(chord);
             ParseFingers(fingers);
+            
+            _chord = new Chord(name: name, parseString: chord, fingers: fingers);
             ParseSize(size);
             InitializeSizes();
             CreateImage();
@@ -172,98 +175,106 @@ namespace EinarEgilsson.Chords {
             _signWidth = (int)(_fretWidth * 0.75);
             _signRadius = _signWidth / 2;
         }
-
-        private string ParseName(string name)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                return "";
-            }
-            var splitString = name.Split('_');
-            for (int i = 1; i < splitString.Length; i++)
-            {
-                if (i % 2 == 0)
+        
+                private string ParseName(string name)
                 {
-                    continue;
+                    if (string.IsNullOrEmpty(name))
+                    {
+                        return "";
+                    }
+                    var splitString = name.Split('_');
+                    for (int i = 1; i < splitString.Length; i++)
+                    {
+                        if (i % 2 == 0)
+                        {
+                            continue;
+                        }
+                        splitString[i] = ConvertSharpSign(splitString[i]);
+                        splitString[i] = ConvertFlatSign(splitString[i]);
+                    }
+                    return string.Join("_", splitString);
                 }
-                splitString[i] = ConvertSharpSign(splitString[i]);
-                splitString[i] = ConvertFlatSign(splitString[i]);
-            }
-            return string.Join("_", splitString);
-        }
 
-        private static string ConvertSharpSign(string name)
-        {
-            if (name.Length > 1)
-            {
-                return name;
-            }
-            return name.Replace("#", "\u266f");
-        }
-
-        private static string ConvertFlatSign(string name)
-        {
-            if (name.Length > 1)
-            {
-                return name;
-            }
-            name = name.Replace("b", "\u266d");
-            return name.Replace("B", "\u266d");
-        }
-
-        private void ParseSize(string size) {
-            if (size == null) {
-                _size = 1;
-            } else {
-                double dsize;
-                if (double.TryParse(size, out dsize)) {
-                    dsize = Math.Round(dsize, 0);
-                    _size = Convert.ToInt32(Math.Min(Math.Max(1, dsize), 10));
-                } else {
-                    _size = 1;
+                private static string ConvertSharpSign(string name)
+                {
+                    if (name.Length > 1)
+                    {
+                        return name;
+                    }
+                    return name.Replace("#", "\u266f");
                 }
-            }
-        }
 
-        private void ParseFingers(string fingers) {
-            if (fingers == null) {
-                return; //Allowed to not specify fingers
-            } else if (!Regex.IsMatch(fingers, @"[tT\-1234]{6}")) {
-                _error = true;
-            } else {
-                _fingers = fingers.ToUpper().ToCharArray();
-            }
-        }
+                private static string ConvertFlatSign(string name)
+                {
+                    if (name.Length > 1)
+                    {
+                        return name;
+                    }
+                    name = name.Replace("b", "\u266d");
+                    return name.Replace("B", "\u266d");
+                }
 
-        private void ParseChord(string chord) {
-            if (chord == null || !Regex.IsMatch(chord, @"[\dxX]{6}|((1|2)?[\dxX]-){5}(1|2)?[\dxX]")) {
-                _error = true;
-            } else {
-                string[] parts;
-                if (chord.Length > 6) {
-                    parts = chord.Split('-');
-                } else {
-                    parts = new string[6];
-                    for (int i = 0; i < 6; i++) {
-                        parts[i] = chord[i].ToString();
+                private void ParseFingers(string fingers) {
+                    if (fingers == null) {
+                        return; //Allowed to not specify fingers
+                    } else if (!Regex.IsMatch(fingers, @"[tT\-1234]{6}")) {
+                        _error = true;
+                    } else {
+                        _fingers = fingers.ToUpper().ToCharArray();
                     }
                 }
-                int maxFret = 0, minFret = int.MaxValue;
-                for (int i = 0; i < 6; i++) {
-                    if (parts[i].ToUpper() == "X") {
-                        _chordPositions[i] = MUTED;
+
+                private void ParseChord(string chord) {
+                    if (chord == null || !Regex.IsMatch(chord, @"[\dxX]{6}|((1|2)?[\dxX]-){5}(1|2)?[\dxX]")) {
+                        _error = true;
                     } else {
-                        _chordPositions[i] = int.Parse(parts[i]);
-                        maxFret = Math.Max(maxFret, _chordPositions[i]);
-                        if (_chordPositions[i] != 0) {
-                            minFret = Math.Min(minFret, _chordPositions[i]);
+                        string[] parts;
+                        if (chord.Length > 6) {
+                            parts = chord.Split('-');
+                        } else {
+                            parts = new string[6];
+                            for (int i = 0; i < 6; i++) {
+                                parts[i] = chord[i].ToString();
+                            }
+                        }
+                        int maxFret = 0, minFret = int.MaxValue;
+                        for (int i = 0; i < 6; i++) {
+                            if (parts[i].ToUpper() == "X") {
+                                _chordPositions[i] = MUTED;
+                            } else {
+                                _chordPositions[i] = int.Parse(parts[i]);
+                                maxFret = Math.Max(maxFret, _chordPositions[i]);
+                                if (_chordPositions[i] != 0) {
+                                    minFret = Math.Min(minFret, _chordPositions[i]);
+                                }
+                            }
+                        }
+                        if (maxFret <= 5) {
+                            _baseFret = 1;
+                        } else {
+                            _baseFret = minFret;
                         }
                     }
                 }
-                if (maxFret <= 5) {
-                    _baseFret = 1;
-                } else {
-                    _baseFret = minFret;
+                
+
+        private void ParseSize(string size)
+        {
+            if (size == null)
+            {
+                _size = 1;
+            }
+            else
+            {
+                double dsize;
+                if (double.TryParse(size, out dsize))
+                {
+                    dsize = Math.Round(dsize, 0);
+                    _size = Convert.ToInt32(Math.Min(Math.Max(1, dsize), 10));
+                }
+                else
+                {
+                    _size = 1;
                 }
             }
         }
@@ -357,8 +368,8 @@ namespace EinarEgilsson.Chords {
             float xoffset = _lineWidth / 2f;
             float totalFretWidth = _fretWidth + _lineWidth;
             float xfirstString = _xstart + 0.5f * _lineWidth;
-            for (int i = 0; i < _chordPositions.Length; i++) {
-                int absolutePos = _chordPositions[i];
+            for (int i = 0; i < _chord.NumberOfStrings; i++) {
+                int absolutePos = _chord.getFretNumberOnString(i);
                 int relativePos = absolutePos - _baseFret + 1;
 
                 float xpos = _xstart - (0.5f * _fretWidth) + (0.5f * _lineWidth) + (i * totalFretWidth);
@@ -402,7 +413,7 @@ namespace EinarEgilsson.Chords {
                     SizeF charSize = _graphics.MeasureString(finger.ToString(), font);
                     _graphics.DrawString(finger.ToString(), font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
                 } else {
-                    int absolutePos = _chordPositions[i];
+                    int absolutePos = _chord.getFretNumberOnString(i);
                     if (absolutePos == OPEN) {
                         SizeF charSize = _graphics.MeasureString("O", font);
                         _graphics.DrawString("O", font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
@@ -420,8 +431,8 @@ namespace EinarEgilsson.Chords {
             float xpos = _xstart + (0.5f * _lineWidth);
             float ypos = _ystart + _boxHeight;
             Font font = new Font(FONT_NAME, _noteFontSize);
-            for (int i = 0; i < _chordPositions.Length; i++) {
-                int absolutePos = _chordPositions[i];
+            for (int i = 0; i < _chord.NumberOfStrings; i++) {
+                int absolutePos = _chord.getFretNumberOnString(i);
                 if (absolutePos != MUTED)
                 {
                     String noteLetter = Chord.GetNoteLetter(i, absolutePos);
@@ -441,13 +452,11 @@ namespace EinarEgilsson.Chords {
             float charHeight = charSize.Height;
             float ypos = _ystart + _boxHeight + charHeight;
 
-            Chord chord = new Chord(_chordName);
-
-            for (int i = 0; i < _chordPositions.Length; i++)
+            for (int i = 0; i < _chord.NumberOfStrings; i++)
             {
-                int absolutePos = _chordPositions[i];
+                int absolutePos = _chord.getFretNumberOnString(i);
                 if (absolutePos != MUTED) {
-                    String rootNote = chord.getRootNote();
+                    String rootNote = _chord.getRootNote();
                         
                     String noteLetter = Chord.GetNoteLetter(i, absolutePos);
                     String noteInterval = Chord.getInterval(_chordName, rootNote, noteLetter);

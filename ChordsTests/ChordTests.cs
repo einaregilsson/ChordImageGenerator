@@ -1,15 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using EinarEgilsson.Chords;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace EinarEgilsson.Chords.Tests
 {
     [TestClass()]
     public class ChordTests
     {
+        #region RootNoteTests
+
         [TestMethod()]
         public void getRootNoteTestBang()
         {
@@ -30,6 +27,10 @@ namespace EinarEgilsson.Chords.Tests
             Chord c = new Chord("Cb");
             Assert.AreEqual("Cb", c.getRootNote());
         }
+
+        #endregion
+
+        #region intervalTests
 
         [TestMethod()]
         public void getIntervalRoot()
@@ -81,5 +82,84 @@ namespace EinarEgilsson.Chords.Tests
             Assert.AreEqual("b13", c.getIntervalFromRootNote("G#"));
         }
         */
+
+        #endregion
+
+        #region NoteTests
+
+        [TestMethod()]
+        public void getSixthStringFirstFret()
+        {
+            Assert.AreEqual("E", Chord.GetNoteLetter(5, 0));
+        }
+
+        [TestMethod()]
+        public void getSixthStringTwelfthFret()
+        {
+            Assert.AreEqual("E", Chord.GetNoteLetter(5, 12));
+        }
+
+
+        [TestMethod()]
+        public void getFifthStringFirstFret()
+        {
+            Assert.AreEqual("B", Chord.GetNoteLetter(4, 0));
+        }
+
+        [TestMethod()]
+        public void getFifthStringTwelfthFret()
+        {
+            Assert.AreEqual("B", Chord.GetNoteLetter(4, 12));
+        }
+
+        [TestMethod()]
+        public void getFourthStringFirstFret()
+        {
+            Assert.AreEqual("G", Chord.GetNoteLetter(3, 0));
+        }
+
+        [TestMethod()]
+        public void getFourthStringTwelfthFret()
+        {
+            Assert.AreEqual("G", Chord.GetNoteLetter(3, 12));
+        }
+
+        [TestMethod()]
+        public void getThirdStringFirstFret()
+        {
+            Assert.AreEqual("D", Chord.GetNoteLetter(2, 0));
+        }
+
+        [TestMethod()]
+        public void getThirdStringTwelfthFret()
+        {
+            Assert.AreEqual("D", Chord.GetNoteLetter(2, 12));
+        }
+
+        [TestMethod()]
+        public void getSecondStringFirstFret()
+        {
+            Assert.AreEqual("A", Chord.GetNoteLetter(1, 0));
+        }
+
+        [TestMethod()]
+        public void getSecondStringTwelfthFret()
+        {
+            Assert.AreEqual("A", Chord.GetNoteLetter(1, 12));
+        }
+
+        [TestMethod()]
+        public void getFirstStringFirstFret()
+        {
+            Assert.AreEqual("E", Chord.GetNoteLetter(0, 0));
+        }
+
+        [TestMethod()]
+        public void getFirstStringTwelfthFret()
+        {
+            Assert.AreEqual("E", Chord.GetNoteLetter(0, 12));
+        }
+
+        #endregion
     }
 }
