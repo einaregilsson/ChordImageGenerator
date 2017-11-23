@@ -19,7 +19,7 @@ namespace EinarEgilsson.Chords
         const int MUTED = -1;
         const int FRET_COUNT = 5;
 
-        public enum FrettingMode {Muted = -1, Open = 0}
+        public enum FrettingMode {Muted = -1, Open = 0, Fretted}
 
         public int NumberOfStrings { get; } = 6;
 
@@ -52,30 +52,7 @@ namespace EinarEgilsson.Chords
             return newChord;
         }
 
-        public String getRootNote() {
-            System.Text.StringBuilder chordRoot = new System.Text.StringBuilder();
-            if (Name.Length < 1)
-            {
-                return "";
-            }
-            chordRoot.Append(Name[0]);
-
-            if (Name.Length > 1)
-            {
-                char secondLetter = Name[1];
-                if (secondLetter == 'b' || secondLetter == '#')
-                {
-                    chordRoot.Append(secondLetter);
-                }
-            }
-            return chordRoot.ToString();
-        }
-
-        public String getIntervalFromRootNote(String secondNote) {
-            String rootNote = getRootNote();
-            return getInterval(Name, rootNote, secondNote);
-        }
-
+        #region staticmethods
         public static String getInterval(String chordName, String rootNote, String secondNote)
         {
             String[] scale = { "E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#", "D", "D#" };
@@ -96,7 +73,7 @@ namespace EinarEgilsson.Chords
                 case 0:
                     return "r";
                 case 1: //b2, b9
-                    return returnFirstMatch(chordName, new string[] { "b2", "b9"});
+                    return returnFirstMatch(chordName, new string[] { "b2", "b9" });
                 case 2:// 2, 9
                     return returnFirstMatch(chordName, new string[] { "2", "9" });
                 case 3: // b3, #9
@@ -124,7 +101,8 @@ namespace EinarEgilsson.Chords
             }
         }
 
-        public static String GetNoteLetter(int stringnum, int fret) {
+        public static String GetNoteLetter(int stringnum, int fret)
+        {
             String[,] scale = new String[,] { { "E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#", "D", "D#"},
                                               { "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"},
                                               { "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#"},
@@ -139,11 +117,53 @@ namespace EinarEgilsson.Chords
             return scale[stringnum, realFret];
         }
 
+        #endregion
+
+        public String getRootNote() {
+            System.Text.StringBuilder chordRoot = new System.Text.StringBuilder();
+            if (Name.Length < 1)
+            {
+                return "";
+            }
+            chordRoot.Append(Name[0]);
+
+            if (Name.Length > 1)
+            {
+                char secondLetter = Name[1];
+                if (secondLetter == 'b' || secondLetter == '#')
+                {
+                    chordRoot.Append(secondLetter);
+                }
+            }
+            return chordRoot.ToString();
+        }
+
+        public String getIntervalFromRootNote(String secondNote) {
+            String rootNote = getRootNote();
+            return getInterval(Name, rootNote, secondNote);
+        }
+
         public int getFretNumberOnString(int stringNumber)
         {
             return _chordPositions[stringNumber];
         }
 
+        public FrettingMode getFrettingModeOnString(int stringNumber)
+        {
+            if (_chordPositions[stringNumber] == MUTED)
+            {
+                return FrettingMode.Muted;
+            }
+            else if (_chordPositions[stringNumber] == OPEN)
+            {
+                return FrettingMode.Open;
+            }
+            else
+            {
+                return FrettingMode.Fretted;
+            }
+        }
+        #region private methods
         private static String returnFirstMatch(String chordName, String[] possibleNoteNames)
         {
             foreach (String note in possibleNoteNames)
@@ -258,6 +278,6 @@ namespace EinarEgilsson.Chords
                 _fingers = fingers.ToUpper().ToCharArray();
             }
         }
-
+        #endregion
     }
 }

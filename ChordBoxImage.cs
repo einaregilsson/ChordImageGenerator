@@ -326,10 +326,13 @@ namespace EinarEgilsson.Chords {
         private void DrawBars() {
             var bars = new Dictionary<char, Bar>();
             for (int i = 0; i < 5; i++) {
-                if (_chordPositions[i] != MUTED && _chordPositions[i] != OPEN && _fingers[i] != NO_FINGER && !bars.ContainsKey(_fingers[i])) {
-                    Bar bar = new Bar { Str = i, Pos = _chordPositions[i], Length = 0, Finger = _fingers[i] };
+                int firstFretPosition = _chord.getFretNumberOnString(i);
+                Chord.FrettingMode frettingMode = _chord.getFrettingModeOnString(i);
+                if (frettingMode != Chord.FrettingMode.Muted && frettingMode != Chord.FrettingMode.Open && _fingers[i] != NO_FINGER && !bars.ContainsKey(_fingers[i])) {
+                    Bar bar = new Bar { Str = i, Pos = firstFretPosition, Length = 0, Finger = _fingers[i] };
                     for (int j = i + 1; j < 6; j++) {
-                        if (_fingers[j] == bar.Finger && _chordPositions[j] == _chordPositions[i]) {
+                        int nextFretPosition = _chord.getFretNumberOnString(j);
+                        if (_fingers[j] == bar.Finger && nextFretPosition == firstFretPosition) {
                             bar.Length = j - i;
                         }
                     }
