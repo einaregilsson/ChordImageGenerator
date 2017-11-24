@@ -90,15 +90,12 @@ namespace EinarEgilsson.Chords {
 
         private int _verticalBufferSpace;
 
-        private int _baseFret;
-
         #endregion
 
         #region Constructor
 
         public ChordBoxImage(string name, string chord, string fingers, string size) {
             _chordName = ParseName(name);
-            ParseChord(chord);
             ParseFingers(fingers);
             
             _chord = new Chord(name: name, parseString: chord, fingers: fingers);
@@ -224,40 +221,6 @@ namespace EinarEgilsson.Chords {
                     }
                 }
 
-                private void ParseChord(string chord) {
-                    if (chord == null || !Regex.IsMatch(chord, @"[\dxX]{6}|((1|2)?[\dxX]-){5}(1|2)?[\dxX]")) {
-                        _error = true;
-                    } else {
-                        string[] parts;
-                        if (chord.Length > 6) {
-                            parts = chord.Split('-');
-                        } else {
-                            parts = new string[6];
-                            for (int i = 0; i < 6; i++) {
-                                parts[i] = chord[i].ToString();
-                            }
-                        }
-                        int maxFret = 0, minFret = int.MaxValue;
-                        for (int i = 0; i < 6; i++) {
-                            if (parts[i].ToUpper() == "X") {
-                                _chordPositions[i] = MUTED;
-                            } else {
-                                _chordPositions[i] = int.Parse(parts[i]);
-                                maxFret = Math.Max(maxFret, _chordPositions[i]);
-                                if (_chordPositions[i] != 0) {
-                                    minFret = Math.Min(minFret, _chordPositions[i]);
-                                }
-                            }
-                        }
-                        if (maxFret <= 5) {
-                            _baseFret = 1;
-                        } else {
-                            _baseFret = minFret;
-                        }
-                    }
-                }
-                
-
         private void ParseSize(string size)
         {
             if (size == null)
@@ -314,7 +277,7 @@ namespace EinarEgilsson.Chords {
                 _graphics.DrawLine(pen, x, _ystart, x, _ystart + _boxHeight - pen.Width);
             }
 
-            if (_baseFret == 1) {
+            if (_chord.BaseFret == 1) {
                 //Need to draw the nut
                 float nutHeight = _fretWidth / 2f;
                 _graphics.FillRectangle(_foregroundBrush, _xstart - _lineWidth / 2f, _ystart - nutHeight, _boxWidth, nutHeight);
@@ -352,7 +315,7 @@ namespace EinarEgilsson.Chords {
                 }
 
                 float xstart = _xstart + bar.Str * totalFretWidth - (_dotWidth / 2);
-                float y = _ystart + (bar.Pos - _baseFret) * totalFretWidth - (0.6f * totalFretWidth) + yTempOffset;
+                float y = _ystart + (bar.Pos - _chord.BaseFret) * totalFretWidth - (0.6f * totalFretWidth) + yTempOffset;
                 Pen pen = new Pen(_foregroundBrush, arcWidth);
                 Pen pen2 = new Pen(_foregroundBrush, 1.3f * arcWidth);
                 //_graphics.DrawLine(pen, xstart, y, xend, y);
@@ -373,30 +336,13 @@ namespace EinarEgilsson.Chords {
             float xfirstString = _xstart + 0.5f * _lineWidth;
             for (int i = 0; i < _chord.NumberOfStrings; i++) {
                 int absolutePos = _chord.getFretNumberOnString(i);
-                int relativePos = absolutePos - _baseFret + 1;
+                int relativePos = absolutePos - _chord.BaseFret + 1;
 
                 float xpos = _xstart - (0.5f * _fretWidth) + (0.5f * _lineWidth) + (i * totalFretWidth);
                 if (relativePos > 0) {
                     float ypos = relativePos * totalFretWidth + yoffset;
                     _graphics.FillEllipse(_foregroundBrush, xpos, ypos, _dotWidth, _dotWidth);
-                }/* else if (absolutePos == OPEN) {
-                    Pen pen = new Pen(_foregroundBrush, _lineWidth);
-                    float ypos = _ystart - _fretWidth;
-                    float markerXpos = xpos + ((_dotWidth - _markerWidth) / 2f);
-                    if (_baseFret == 1) {
-                        ypos -= _nutHeight;
-                    }
-                    _graphics.DrawEllipse(pen, markerXpos, ypos, _markerWidth, _markerWidth);
-                } else if (absolutePos == MUTED) {
-                    Pen pen = new Pen(_foregroundBrush, _lineWidth * 1.5f);
-                    float ypos = _ystart - _fretWidth;
-                    float markerXpos = xpos + ((_dotWidth - _markerWidth) / 2f);
-                    if (_baseFret == 1) {
-                        ypos -= _nutHeight;
-                    }
-                    _graphics.DrawLine(pen, markerXpos, ypos, markerXpos + _markerWidth, ypos + _markerWidth);
-                    _graphics.DrawLine(pen, markerXpos, ypos + _markerWidth, markerXpos + _markerWidth, ypos);
-                } */
+                }
             }
         }
 
@@ -405,7 +351,7 @@ namespace EinarEgilsson.Chords {
             float xpos = _xstart + (0.5f * _lineWidth);
             //float ypos = _ystart + _boxHeight;
             float ypos = _ystart - _fretWidth - 1;
-            if (_baseFret == 1)
+            if (_chord.BaseFret == 1)
             {
                 ypos -= _nutHeight + 2;
             }
@@ -525,10 +471,10 @@ namespace EinarEgilsson.Chords {
                 }
             }
 
-            if (_baseFret > 1) {
+            if (_chord.BaseFret > 1) {
                 Font fretFont = new Font(FONT_NAME, _fretFontSize, GraphicsUnit.Pixel);
                 float offset = (fretFont.Size - _fretWidth) / 2f;
-                _graphics.DrawString(_baseFret + "fr", fretFont, _foregroundBrush, _xstart + _boxWidth + 0.3f * _fretWidth, _ystart - offset);
+                _graphics.DrawString(_chord.BaseFret + "fr", fretFont, _foregroundBrush, _xstart + _boxWidth + 0.3f * _fretWidth, _ystart - offset);
             }
         }
 

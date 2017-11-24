@@ -26,6 +26,12 @@ namespace EinarEgilsson.Chords
         private int[] _chordPositions;
         private char[] _fingers = new char[] { NO_FINGER, NO_FINGER, NO_FINGER,
                                              NO_FINGER, NO_FINGER, NO_FINGER};
+
+        public int BaseFret
+        {
+            get { return this._baseFret; }
+        }
+
         private int _baseFret;
 
         private bool _error;
