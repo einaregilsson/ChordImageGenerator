@@ -52,10 +52,8 @@ namespace EinarEgilsson.Chords {
         private Graphics _graphics;
 
         private int _size;
-        private int[] _chordPositions = new int[6];
         private char[] _fingers = new char[] { NO_FINGER, NO_FINGER, NO_FINGER,
                                              NO_FINGER, NO_FINGER, NO_FINGER};
-        private string _chordName;
         private bool _error;
         private Chord _chord;
 
@@ -94,7 +92,6 @@ namespace EinarEgilsson.Chords {
         #region Constructor
 
         public ChordBoxImage(string name, string chord, string fingers, string size) {
-            _chordName = ParseName(name);
             ParseFingers(fingers);
             
             _chord = new Chord(name: name, parseString: chord, fingers: fingers);
@@ -348,7 +345,6 @@ namespace EinarEgilsson.Chords {
         //Draws the text above the box specifying finger numbers
         private void DrawFingers() {
             float xpos = _xstart + (0.5f * _lineWidth);
-            //float ypos = _ystart + _boxHeight;
             float ypos = _ystart - _fretWidth - 1;
             if (_chord.BaseFret == 1)
             {
@@ -409,10 +405,8 @@ namespace EinarEgilsson.Chords {
                 Chord.FrettingMode frettingMode = _chord.getFrettingModeOnString(i);
                 if (frettingMode != Chord.FrettingMode.Muted) {
                     String rootNote = _chord.getRootNote();
-                        
                     String noteLetter = Chord.GetNoteLetter(i, absolutePos);
-                    String noteInterval = Chord.getInterval(_chordName, rootNote, noteLetter);
-                    
+                    String noteInterval = _chord.getIntervalFromRootNote(noteLetter);
                     SizeF charSizeIndividual = _graphics.MeasureString(noteInterval, font);
                     _graphics.DrawString(noteInterval, font, _foregroundBrush, xpos - (0.5f * charSizeIndividual.Width), ypos);
                 }
@@ -423,7 +417,7 @@ namespace EinarEgilsson.Chords {
         private void DrawChordName() {
             Font nameFont = new Font(FONT_NAME, _nameFontSize, GraphicsUnit.Pixel);
             Font superFont = new Font(FONT_NAME, _superScriptFontSize, GraphicsUnit.Pixel);
-            string[] parts = _chordName.Split('_');
+            string[] parts = _chord.Name.Split('_');
             float xTextStart = _xstart;
 
             //Set max parts to 4 for protection
