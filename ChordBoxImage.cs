@@ -42,7 +42,6 @@ namespace EinarEgilsson.Chords {
         const char RING_FINGER = '3';
         const char LITTLE_FINGER = '4';
         const int OPEN = 0;
-        const int MUTED = -1;
         const int FRET_COUNT = 5;
         const string FONT_NAME = "Arial";
 
@@ -357,17 +356,18 @@ namespace EinarEgilsson.Chords {
             }
             Font font = new Font(FONT_NAME, _fingerFontSize);
             for(int i = 0; i < _fingers.Length; i++) {
+                Chord.FrettingMode frettingMode = _chord.getFrettingModeOnString(i);
                 char finger = _fingers[i];
                 if (finger != NO_FINGER) {
                     SizeF charSize = _graphics.MeasureString(finger.ToString(), font);
                     _graphics.DrawString(finger.ToString(), font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
                 } else {
                     int absolutePos = _chord.getFretNumberOnString(i);
-                    if (absolutePos == OPEN) {
+                    if (frettingMode == Chord.FrettingMode.Open) {
                         SizeF charSize = _graphics.MeasureString("O", font);
                         _graphics.DrawString("O", font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
                     }
-                    else if (absolutePos == MUTED) {
+                    else if (frettingMode == Chord.FrettingMode.Muted) {
                         SizeF charSize = _graphics.MeasureString("X", font);
                         _graphics.DrawString("X", font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
                     }
@@ -382,7 +382,9 @@ namespace EinarEgilsson.Chords {
             Font font = new Font(FONT_NAME, _noteFontSize);
             for (int i = 0; i < _chord.NumberOfStrings; i++) {
                 int absolutePos = _chord.getFretNumberOnString(i);
-                if (absolutePos != MUTED)
+                Chord.FrettingMode frettingMode = _chord.getFrettingModeOnString(i);
+
+                if (frettingMode != Chord.FrettingMode.Muted)
                 {
                     String noteLetter = Chord.GetNoteLetter(i, absolutePos);
                     SizeF charSize = _graphics.MeasureString(noteLetter, font);
@@ -404,7 +406,8 @@ namespace EinarEgilsson.Chords {
             for (int i = 0; i < _chord.NumberOfStrings; i++)
             {
                 int absolutePos = _chord.getFretNumberOnString(i);
-                if (absolutePos != MUTED) {
+                Chord.FrettingMode frettingMode = _chord.getFrettingModeOnString(i);
+                if (frettingMode != Chord.FrettingMode.Muted) {
                     String rootNote = _chord.getRootNote();
                         
                     String noteLetter = Chord.GetNoteLetter(i, absolutePos);
