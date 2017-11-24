@@ -8,7 +8,6 @@ namespace EinarEgilsson.Chords
 {
     public class Chord
     {
-        String Name { get; set; }
         const char NO_FINGER = '-';
         const char THUMB = 'T';
         const char INDEX_FINGER = '1';
@@ -19,22 +18,21 @@ namespace EinarEgilsson.Chords
         const int MUTED = -1;
         const int FRET_COUNT = 5;
 
-        public enum FrettingMode {Muted = -1, Open = 0, Fretted}
-
-        public int NumberOfStrings { get; } = 6;
-
         private int[] _chordPositions;
         private char[] _fingers = new char[] { NO_FINGER, NO_FINGER, NO_FINGER,
                                              NO_FINGER, NO_FINGER, NO_FINGER};
+        private int _baseFret;
+        private bool _error;
 
+        public String Name { get; set; }
+        public enum FrettingMode { Muted = -1, Open = 0, Fretted }
+        public int NumberOfStrings { get; } = 6;
         public int BaseFret
         {
             get { return this._baseFret; }
         }
 
-        private int _baseFret;
-
-        private bool _error;
+        #region initializers
 
         public Chord(String name = "", String parseString = "", String fingers = "") {
             _chordPositions = new int[NumberOfStrings];
@@ -57,6 +55,8 @@ namespace EinarEgilsson.Chords
             Chord newChord = new Chord(ParseName(chordString));
             return newChord;
         }
+
+        #endregion
 
         #region staticmethods
         public static String getInterval(String chordName, String rootNote, String secondNote)
