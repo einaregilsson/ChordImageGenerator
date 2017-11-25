@@ -41,7 +41,7 @@ namespace EinarEgilsson.Chords
             {               
                 ParseChord(parseString);
             }
-            if (parseString != null && !"".Equals(parseString))
+            if (name != null && !"".Equals(name))
             {
                 Name = ParseName(name);
             }
@@ -125,6 +125,8 @@ namespace EinarEgilsson.Chords
 
         #endregion
 
+        #region public Interface
+
         public String getRootNote() {
             System.Text.StringBuilder chordRoot = new System.Text.StringBuilder();
             if (Name.Length < 1)
@@ -174,6 +176,8 @@ namespace EinarEgilsson.Chords
         {
             return _fingers[stringNumber];
         }
+
+        #endregion
 
         #region private methods
         private static String returnFirstMatch(String chordName, String[] possibleNoteNames)
