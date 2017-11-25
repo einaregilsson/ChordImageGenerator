@@ -83,7 +83,13 @@ namespace EinarEgilsson.Chords {
         #region Constructor
 
         public ChordBoxImage(string name, string chord, string fingers, string size) {
-            _chord = new Chord(name: name, parseString: chord, fingers: fingers);
+            try
+            {
+                _chord = new Chord(name: name, parseString: chord, fingers: fingers);
+            } catch (ArgumentException ae)
+            {
+                _error = false;
+            }
             ParseSize(size);
             InitializeSizes();
             CreateImage();

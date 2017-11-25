@@ -22,7 +22,6 @@ namespace EinarEgilsson.Chords
         private char[] _fingers = new char[] { NO_FINGER, NO_FINGER, NO_FINGER,
                                              NO_FINGER, NO_FINGER, NO_FINGER};
         private int _baseFret;
-        private bool _error;
 
         public String Name { get; set; }
         public enum FrettingMode { Muted = -1, Open = 0, Fretted }
@@ -37,17 +36,29 @@ namespace EinarEgilsson.Chords
         public Chord(String name = "", String parseString = "", String fingers = "") {
             _chordPositions = new int[NumberOfStrings];
 
-            if (parseString != null && !"".Equals(parseString))
-            {               
-                ParseChord(parseString);
-            }
             if (name != null && !"".Equals(name))
             {
                 Name = ParseName(name);
             }
+            if (parseString != null && !"".Equals(parseString))
+            {
+                try
+                {
+                    ParseChord(parseString);
+                } catch (ArgumentException ae)
+                {
+                    throw ae;
+                }
+            }
             if (fingers != null && !"".Equals(fingers))
             {
-                ParseFingers(fingers);
+                try
+                {
+                    ParseFingers(fingers);
+                } catch (ArgumentException ae)
+                {
+                    throw ae;
+                }
             }
         }
 
@@ -232,9 +243,11 @@ namespace EinarEgilsson.Chords
 
         private void ParseChord(string chord)
         {
+            throw new ArgumentException("Not a parseable chord string");
+
             if (chord == null || !Regex.IsMatch(chord, @"[\dxX]{6}|((1|2)?[\dxX]-){5}(1|2)?[\dxX]"))
             {
-                _error = true;
+                throw new ArgumentException("Not a parseable chord string");
             }
             else
             {
@@ -287,7 +300,7 @@ namespace EinarEgilsson.Chords
             }
             else if (!Regex.IsMatch(fingers, @"[tT\-1234]{6}"))
             {
-                _error = true;
+                throw new ArgumentException("Not a parseable finger placement");
             }
             else
             {
