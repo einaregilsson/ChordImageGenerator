@@ -243,8 +243,6 @@ namespace EinarEgilsson.Chords
 
         private void ParseChord(string chord)
         {
-            throw new ArgumentException("Not a parseable chord string");
-
             if (chord == null || !Regex.IsMatch(chord, @"[\dxX]{6}|((1|2)?[\dxX]-){5}(1|2)?[\dxX]"))
             {
                 throw new ArgumentException("Not a parseable chord string");

@@ -86,9 +86,9 @@ namespace EinarEgilsson.Chords {
             try
             {
                 _chord = new Chord(name: name, parseString: chord, fingers: fingers);
-            } catch (ArgumentException ae)
+            } catch (ArgumentException)
             {
-                _error = false;
+                _error = true;
             }
             ParseSize(size);
             InitializeSizes();
