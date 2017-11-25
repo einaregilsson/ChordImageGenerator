@@ -196,9 +196,9 @@ namespace EinarEgilsson.Chords {
                 _graphics.DrawLine(errorPen, 0f, _bitmap.Height, _bitmap.Width, 0);
             } else {
                 DrawChordBox();
-                DrawChordPositions(); //Seems to draw both the top text and the finger dots
+                DrawChordPositions();
                 DrawChordName();
-                DrawFingers();      //Draws the text below the box specifying finger numbers
+                DrawFingers();
                 DrawBars();
                 DrawNotes();
                 DrawIntervals();
