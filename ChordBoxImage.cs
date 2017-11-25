@@ -35,13 +35,6 @@ namespace EinarEgilsson.Chords {
 
         #region Constants
 
-        const char NO_FINGER = '-';
-        const char THUMB = 'T';
-        const char INDEX_FINGER = '1';
-        const char MIDDLE_FINGER = '2';
-        const char RING_FINGER = '3';
-        const char LITTLE_FINGER = '4';
-        const int OPEN = 0;
         const int FRET_COUNT = 5;
         const string FONT_NAME = "Arial";
 
@@ -52,8 +45,6 @@ namespace EinarEgilsson.Chords {
         private Graphics _graphics;
 
         private int _size;
-        private char[] _fingers = new char[] { NO_FINGER, NO_FINGER, NO_FINGER,
-                                             NO_FINGER, NO_FINGER, NO_FINGER};
         private bool _error;
         private Chord _chord;
 
@@ -92,8 +83,6 @@ namespace EinarEgilsson.Chords {
         #region Constructor
 
         public ChordBoxImage(string name, string chord, string fingers, string size) {
-            ParseFingers(fingers);
-            
             _chord = new Chord(name: name, parseString: chord, fingers: fingers);
             ParseSize(size);
             InitializeSizes();
@@ -207,16 +196,6 @@ namespace EinarEgilsson.Chords {
                     return name.Replace("B", "\u266d");
                 }
 
-                private void ParseFingers(string fingers) {
-                    if (fingers == null) {
-                        return; //Allowed to not specify fingers
-                    } else if (!Regex.IsMatch(fingers, @"[tT\-1234]{6}")) {
-                        _error = true;
-                    } else {
-                        _fingers = fingers.ToUpper().ToCharArray();
-                    }
-                }
-
         private void ParseSize(string size)
         {
             if (size == null)
@@ -286,12 +265,14 @@ namespace EinarEgilsson.Chords {
             var bars = new Dictionary<char, Bar>();
             for (int i = 0; i < 5; i++) {
                 int firstFretPosition = _chord.getFretNumberOnString(i);
+                char firstFinger = _chord.getUsedFingerOnString(i);
                 Chord.FrettingMode frettingMode = _chord.getFrettingModeOnString(i);
-                if (frettingMode != Chord.FrettingMode.Muted && frettingMode != Chord.FrettingMode.Open && _fingers[i] != NO_FINGER && !bars.ContainsKey(_fingers[i])) {
-                    Bar bar = new Bar { Str = i, Pos = firstFretPosition, Length = 0, Finger = _fingers[i] };
+                if (frettingMode != Chord.FrettingMode.Muted && frettingMode != Chord.FrettingMode.Open && !bars.ContainsKey(firstFinger)) {
+                    Bar bar = new Bar { Str = i, Pos = firstFretPosition, Length = 0, Finger = firstFinger };
                     for (int j = i + 1; j < 6; j++) {
                         int nextFretPosition = _chord.getFretNumberOnString(j);
-                        if (_fingers[j] == bar.Finger && nextFretPosition == firstFretPosition) {
+                        int nextFinger = _chord.getUsedFingerOnString(j);
+                        if (nextFinger == bar.Finger && nextFretPosition == firstFretPosition) {
                             bar.Length = j - i;
                         }
                     }
@@ -351,10 +332,10 @@ namespace EinarEgilsson.Chords {
                 ypos -= _nutHeight + 2;
             }
             Font font = new Font(FONT_NAME, _fingerFontSize);
-            for(int i = 0; i < _fingers.Length; i++) {
+            for(int i = 0; i < _chord.NumberOfStrings; i++) {
                 Chord.FrettingMode frettingMode = _chord.getFrettingModeOnString(i);
-                char finger = _fingers[i];
-                if (finger != NO_FINGER) {
+                char finger = _chord.getUsedFingerOnString(i);
+                if (frettingMode == Chord.FrettingMode.Fretted) {
                     SizeF charSize = _graphics.MeasureString(finger.ToString(), font);
                     _graphics.DrawString(finger.ToString(), font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
                 } else {

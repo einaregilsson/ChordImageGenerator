@@ -169,6 +169,12 @@ namespace EinarEgilsson.Chords
                 return FrettingMode.Fretted;
             }
         }
+
+        public char getUsedFingerOnString(int stringNumber)
+        {
+            return _fingers[stringNumber];
+        }
+
         #region private methods
         private static String returnFirstMatch(String chordName, String[] possibleNoteNames)
         {
