@@ -76,8 +76,6 @@ namespace EinarEgilsson.Chords {
         private Brush _foregroundBrush = Brushes.Black;
         private Brush _backgroundBrush = Brushes.White;
 
-        private int _verticalBufferSpace;
-
         #endregion
 
         #region Constructor
@@ -150,12 +148,11 @@ namespace EinarEgilsson.Chords {
                 _superScriptFontSize += 2;
             }
 
-            _verticalBufferSpace = 10;
-
-            _ystart = (float)Math.Round(0.2f * _superScriptFontSize + _nameFontSize + _fingerFontSize + _nutHeight + 1.7f * _markerWidth);
+            //Where to start the chordbox
+            _ystart = (float)Math.Round(0.2f * _superScriptFontSize + _nameFontSize + _nutHeight + 1.7f * _markerWidth);
 
             _imageWidth = (int)(_boxWidth + 5 * _fretWidth);
-            _imageHeight = (int)(_boxHeight + _ystart + _fretWidth + _fretWidth + _verticalBufferSpace);
+            _imageHeight = (int)(_boxHeight + _ystart + _fretWidth + _fretWidth);
 
             _xstart = (_imageWidth - _boxWidth) / 2f;
 
@@ -293,10 +290,10 @@ namespace EinarEgilsson.Chords {
         //Draws the text above the box specifying finger numbers
         private void DrawFingers() {
             float xpos = _xstart + (0.5f * _lineWidth);
-            float ypos = _ystart - _fretWidth - 1;
+            float ypos = _ystart - _fretWidth - 3;
             if (_chord.BaseFret == 1)
             {
-                ypos -= _nutHeight + 2;
+                ypos -= _nutHeight;
             }
             Font font = new Font(FONT_NAME, _fingerFontSize);
             for(int i = 0; i < _chord.NumberOfStrings; i++) {
@@ -342,10 +339,15 @@ namespace EinarEgilsson.Chords {
         {
             float xpos = _xstart + (0.5f * _lineWidth);
 
-            Font font = new Font(FONT_NAME, _intervalFontSize);
-            SizeF charSize = _graphics.MeasureString("X", font);
-            float charHeight = charSize.Height;
-            float ypos = _ystart + _boxHeight + charHeight;
+            Font intervalFont = new Font(FONT_NAME, _intervalFontSize);
+
+            Font noteFont = new Font(FONT_NAME, _noteFontSize);
+            SizeF noteCharSize = _graphics.MeasureString("X", noteFont);
+            float notecharHeight = noteCharSize.Height;
+
+            //The line above are the notes, so use that char size to find out how 
+            //far down to start the next line
+            float ypos = _ystart + _boxHeight + notecharHeight;
 
             for (int i = 0; i < _chord.NumberOfStrings; i++)
             {
@@ -355,8 +357,8 @@ namespace EinarEgilsson.Chords {
                     String rootNote = _chord.getRootNote();
                     String noteLetter = Chord.GetNoteLetter(i, absolutePos);
                     String noteInterval = _chord.getIntervalFromRootNote(noteLetter);
-                    SizeF charSizeIndividual = _graphics.MeasureString(noteInterval, font);
-                    _graphics.DrawString(noteInterval, font, _foregroundBrush, xpos - (0.5f * charSizeIndividual.Width), ypos);
+                    SizeF charSizeIndividual = _graphics.MeasureString(noteInterval, intervalFont);
+                    _graphics.DrawString(noteInterval, intervalFont, _foregroundBrush, xpos - (0.5f * charSizeIndividual.Width), ypos);
                 }
                 xpos += (_fretWidth + _lineWidth);
             }
