@@ -135,8 +135,8 @@ namespace EinarEgilsson.Chords {
             float perc = family.GetCellAscent(FontStyle.Regular) / (float)family.GetLineSpacing(FontStyle.Regular);
             _fretFontSize = _fretWidth / perc;
             _fingerFontSize = _fretWidth * 0.8f;
-            _intervalFontSize = _fingerFontSize - 1;
-            _noteFontSize = _fretWidth * 0.6f;
+            _intervalFontSize = _fingerFontSize -1;
+            _noteFontSize = _fingerFontSize -1;
             _nameFontSize = _fretWidth * 2f / perc;
             _superScriptFontSize = 0.7f * _nameFontSize;
             if (_size == 1) {
@@ -152,7 +152,7 @@ namespace EinarEgilsson.Chords {
             _ystart = (float)Math.Round(0.2f * _superScriptFontSize + _nameFontSize + _nutHeight + 1.7f * _markerWidth);
 
             _imageWidth = (int)(_boxWidth + 5 * _fretWidth);
-            _imageHeight = (int)(_boxHeight + _ystart + _fretWidth + _fretWidth);
+            _imageHeight = (int)(_boxHeight + _ystart + _fretWidth + _fretWidth + _intervalFontSize + _noteFontSize);
 
             _xstart = (_imageWidth - _boxWidth) / 2f;
 
@@ -347,7 +347,7 @@ namespace EinarEgilsson.Chords {
 
             //The line above are the notes, so use that char size to find out how 
             //far down to start the next line
-            float ypos = _ystart + _boxHeight + notecharHeight;
+            float ypos = _ystart + _boxHeight + notecharHeight - 2;
 
             for (int i = 0; i < _chord.NumberOfStrings; i++)
             {
