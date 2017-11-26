@@ -46,6 +46,7 @@ function parseChord(chord) {
     var p = (chord.match(/p(os)?=([^&]+)/) || {})[2];
     var f = (chord.match(/f(ingers)?=([^&]+)/) || {})[2];
     var s = (chord.match(/s(ize)?=([^&]+)/) || {})[2];
+    var e = (chord.match(/e(xpanded)?=([^&]+)/) || {})[2];
 
     var doubleDigit = true;
     var tempParts;
@@ -77,6 +78,13 @@ function parseChord(chord) {
     }
 
     $('size').value = s || '2';
+
+    if (e && e == 'true') {
+        $('expanded').checked = true
+    } else {
+        $('expanded').checked = false
+    }
+
     showChord();
 }
 
@@ -114,12 +122,13 @@ function showChord() {
     var name = $('chordname').value;
     var chord = pE.value + '-' + pA.value + '-' + pD.value + '-' + pG.value + '-' + pB.value + '-' + pe.value;
     var size = $('size').value;
+    var expanded = $('expanded').checked
     if (chord.length == 11) {
         chord = chord.replace(/-/g, '');
     }
     name = escapeName(name);
     var fingers = fE.value + fA.value + fD.value + fG.value + fB.value + fe.value;
-    var chordUrl = name + '.png?p=' + chord + '&f=' + fingers + '&s=' + size;
+    var chordUrl = name + '.png?p=' + chord + '&f=' + fingers + '&s=' + size + '&e=' + expanded;
     var url = 'http://' + document.location.host + document.location.pathname.replace('index.html', '');
     url += chordUrl;
 

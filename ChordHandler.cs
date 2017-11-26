@@ -41,12 +41,14 @@ namespace EinarEgilsson.Chords
             var pos = qs["pos"] ?? qs["p"] ?? "000000";
             var fingers = qs["fingers"] ?? qs["f"] ?? "------";
             var size = qs["size"] ?? qs["s"] ?? "1";
+            var expanded = qs["expanded"] ?? qs["e"] ?? "false";
+
 
             response.ContentType = "image/png";
             response.Cache.SetCacheability(HttpCacheability.Public);
             response.Cache.SetMaxAge(TimeSpan.FromDays(7));
  
-            using (var img = new ChordBoxImage(chordName, pos, fingers, size))
+            using (var img = new ChordBoxImage(chordName, pos, fingers, size, expanded))
             {
                 img.Save(response.OutputStream);
             }

@@ -76,11 +76,13 @@ namespace EinarEgilsson.Chords {
         private Brush _foregroundBrush = Brushes.Black;
         private Brush _backgroundBrush = Brushes.White;
 
+        private bool _expandedInfo;
+
         #endregion
 
         #region Constructor
 
-        public ChordBoxImage(string name, string chord, string fingers, string size) {
+        public ChordBoxImage(string name, string chord, string fingers, string size, string expanded) {
             try
             {
                 _chord = new Chord(name: name, parseString: chord, fingers: fingers);
@@ -88,6 +90,13 @@ namespace EinarEgilsson.Chords {
             {
                 _error = true;
             }
+
+            bool result = bool.TryParse(expanded, out _expandedInfo);
+            if (!result)
+            {
+                _expandedInfo = false;
+            }
+
             ParseSize(size);
             InitializeSizes();
             CreateImage();
@@ -196,8 +205,11 @@ namespace EinarEgilsson.Chords {
                 DrawChordName();
                 DrawFingers();
                 DrawBars();
-                DrawNotes();
-                DrawIntervals();
+                if (_expandedInfo)
+                {
+                    DrawNotes();
+                    DrawIntervals();
+                }
             }
         }
 
@@ -277,23 +289,54 @@ namespace EinarEgilsson.Chords {
             for (int i = 0; i < _chord.NumberOfStrings; i++) {
                 int absolutePos = _chord.getFretNumberOnString(i);
                 int relativePos = absolutePos - _chord.BaseFret + 1;
+                Chord.FrettingMode frettingMode = _chord.getFrettingModeOnString(i);
 
                 float xpos = _xstart - (0.5f * _fretWidth) + (0.5f * _lineWidth) + (i * totalFretWidth);
                 if (relativePos > 0) {
                     float ypos = relativePos * totalFretWidth + yoffset;
                     _graphics.FillEllipse(_foregroundBrush, xpos, ypos, _dotWidth, _dotWidth);
+                } else if (frettingMode == Chord.FrettingMode.Open && !_expandedInfo)
+                {
+                    Pen pen = new Pen(_foregroundBrush, _lineWidth);
+                    float ypos = _ystart - _fretWidth;
+                    float markerXpos = xpos + ((_dotWidth - _markerWidth) / 2f);
+                    if (_chord.BaseFret == 1)
+                    {
+                        ypos -= _nutHeight;
+                    }
+                    _graphics.DrawEllipse(pen, markerXpos, ypos, _markerWidth, _markerWidth);
+                } else if (frettingMode == Chord.FrettingMode.Muted && !_expandedInfo)
+                {
+                    Pen pen = new Pen(_foregroundBrush, _lineWidth * 1.5f);
+                    float ypos = _ystart - _fretWidth;
+                    float markerXpos = xpos + ((_dotWidth - _markerWidth) / 2f);
+                    if (_chord.BaseFret == 1)
+                    {
+                        ypos -= _nutHeight;
+                    }
+                    _graphics.DrawLine(pen, markerXpos, ypos, markerXpos + _markerWidth, ypos + _markerWidth);
+                    _graphics.DrawLine(pen, markerXpos, ypos + _markerWidth, markerXpos + _markerWidth, ypos);
                 }
             }
         }
 
         //Draws the text above the box specifying finger numbers
-        private void DrawFingers() {
+        private void DrawFingers() {            
             float xpos = _xstart + (0.5f * _lineWidth);
-            float ypos = _ystart - _fretWidth - 3;
-            if (_chord.BaseFret == 1)
+            float ypos;
+            if (_expandedInfo)
             {
-                ypos -= _nutHeight;
+                ypos = _ystart - _fretWidth - 3;
+                if (_chord.BaseFret == 1)
+                {
+                    ypos -= _nutHeight;
+                }
             }
+            else
+            {
+                ypos = _ystart + _boxHeight;
+            }
+
             Font font = new Font(FONT_NAME, _fingerFontSize);
             for(int i = 0; i < _chord.NumberOfStrings; i++) {
                 Chord.FrettingMode frettingMode = _chord.getFrettingModeOnString(i);
@@ -301,16 +344,13 @@ namespace EinarEgilsson.Chords {
                 if (frettingMode == Chord.FrettingMode.Fretted) {
                     SizeF charSize = _graphics.MeasureString(finger.ToString(), font);
                     _graphics.DrawString(finger.ToString(), font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
-                } else {
-                    int absolutePos = _chord.getFretNumberOnString(i);
-                    if (frettingMode == Chord.FrettingMode.Open) {
-                        SizeF charSize = _graphics.MeasureString("O", font);
-                        _graphics.DrawString("O", font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
-                    }
-                    else if (frettingMode == Chord.FrettingMode.Muted) {
+                } else if (frettingMode == Chord.FrettingMode.Open && _expandedInfo)
+                {
+                    SizeF charSize = _graphics.MeasureString("O", font);
+                    _graphics.DrawString("O", font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
+                } else if (frettingMode == Chord.FrettingMode.Muted && _expandedInfo) {
                         SizeF charSize = _graphics.MeasureString("X", font);
                         _graphics.DrawString("X", font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
-                    }
                 }
                 xpos += (_fretWidth + _lineWidth);
             }
