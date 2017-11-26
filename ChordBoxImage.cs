@@ -295,7 +295,7 @@ namespace EinarEgilsson.Chords {
                 if (relativePos > 0) {
                     float ypos = relativePos * totalFretWidth + yoffset;
                     _graphics.FillEllipse(_foregroundBrush, xpos, ypos, _dotWidth, _dotWidth);
-                } else if (frettingMode == Chord.FrettingMode.Open && !_expandedInfo)
+                } else if (frettingMode == Chord.FrettingMode.Open)
                 {
                     Pen pen = new Pen(_foregroundBrush, _lineWidth);
                     float ypos = _ystart - _fretWidth;
@@ -305,7 +305,7 @@ namespace EinarEgilsson.Chords {
                         ypos -= _nutHeight;
                     }
                     _graphics.DrawEllipse(pen, markerXpos, ypos, _markerWidth, _markerWidth);
-                } else if (frettingMode == Chord.FrettingMode.Muted && !_expandedInfo)
+                } else if (frettingMode == Chord.FrettingMode.Muted)
                 {
                     Pen pen = new Pen(_foregroundBrush, _lineWidth * 1.5f);
                     float ypos = _ystart - _fretWidth;
@@ -344,14 +344,8 @@ namespace EinarEgilsson.Chords {
                 if (frettingMode == Chord.FrettingMode.Fretted) {
                     SizeF charSize = _graphics.MeasureString(finger.ToString(), font);
                     _graphics.DrawString(finger.ToString(), font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
-                } else if (frettingMode == Chord.FrettingMode.Open && _expandedInfo)
-                {
-                    SizeF charSize = _graphics.MeasureString("O", font);
-                    _graphics.DrawString("O", font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
-                } else if (frettingMode == Chord.FrettingMode.Muted && _expandedInfo) {
-                        SizeF charSize = _graphics.MeasureString("X", font);
-                        _graphics.DrawString("X", font, _foregroundBrush, xpos - (0.5f * charSize.Width), ypos);
                 }
+
                 xpos += (_fretWidth + _lineWidth);
             }
         }
