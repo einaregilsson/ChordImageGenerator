@@ -2,3 +2,6 @@ bin/*
 obj/*
 *.suo
 *.user
+*.userprefs
+.DS_Store
+
