@@ -18,5 +18,19 @@ There is a small example website at [http://chordgenerator.net](http://chordgene
 
 There is nothing web specific about the actual image generation. It can be saved to any stream so you could just as easily use it in a desktop application.
 
+## Using the project
+
+This project has been updated to use .NET Core 2.2. Clone the repository from GitHub, then go into the folder where it is and run:
+
+```
+dotnet restore
+dotnet run
+```
+
+That should start a local web server on port 5000, access it as https://localhost:5000/ . 
+
+If you're on a Mac you will need to install mono-libgdiplus like this: ```brew install mono-libgdiplus```. The project should run on a Mac and on Linux
+but the drawing might not look **exactly** the same as it does on Windows, because of GDI+ differences.
+
 The source is licensed under the MIT License. You are also free to link directly to chordgenerator.net, although I give no guarantees about uptime or reliability.
 
