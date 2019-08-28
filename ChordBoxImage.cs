@@ -164,7 +164,6 @@ namespace EinarEgilsson.Chords {
 
             _xstart = _fretWidth;
             _ystart = (float) Math.Round(0.2f * _superScriptFontSize + _nameFontSize + _nutHeight + 1.7f * _markerWidth);
-            Console.WriteLine(_ystart);
             _imageWidth = (int)(_boxWidth + 5 * _fretWidth);
             _imageHeight = (int)(_boxHeight + _ystart + _fretWidth + _fretWidth);
 
@@ -289,7 +288,6 @@ namespace EinarEgilsson.Chords {
         private void DrawChordBox() {
             Pen pen = new Pen(_foregroundBrush, _lineWidth);
             float totalFretWidth = _fretWidth + _lineWidth;
-            _graphics.SmoothingMode = SmoothingMode.None;
             for (int i = 0; i <= FRET_COUNT; i++) {
                 float y = _ystart + i * totalFretWidth;
                 _graphics.DrawLine(pen, _xstart, y, _xstart + _boxWidth - _lineWidth, y);
@@ -297,15 +295,14 @@ namespace EinarEgilsson.Chords {
 
             for (int i = 0; i < 6; i++) {
                 float x = _xstart + (i * totalFretWidth);
-                _graphics.DrawLine(pen, x, _ystart, x,_ystart + _boxHeight - pen.Width);
+                _graphics.DrawLine(pen, x, _ystart, x, _ystart + _boxHeight - pen.Width);
             }
 
             if (_baseFret == 1) {
                 //Need to draw the nut
                 float nutHeight = _fretWidth / 2f;
-                _graphics.FillRectangle(_foregroundBrush, (int)Math.Ceiling(_xstart - _lineWidth / 2f), _ystart - nutHeight, _boxWidth, nutHeight);
+                _graphics.FillRectangle(_foregroundBrush, _xstart - _lineWidth / 2f, _ystart - nutHeight, _boxWidth, nutHeight);
             }
-            _graphics.SmoothingMode = SmoothingMode.HighQuality;
         }
 
         private struct Bar { public int Str, Pos, Length; public char Finger; }
