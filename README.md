@@ -10,7 +10,8 @@ Chord Image Generator is a small .NET library to generate images of guitar chord
 ![Image of a A Chord](http://chordgenerator.net/A.png?p=x02220&f=--123-&s=3 "A Chord")
 ![Image of a A Chord](http://chordgenerator.net/A_5.png?p=577655&f=134211&s=3 "A bar Chord")
 
-There is a small example website at [http://chordgenerator.net](http://chordgenerator.net) where you can try different chords and see how they are constructed. But basically it is just done by constructing the right url of the form /chordname/fret-positions/fingerings/size . E.g. the chords above are the following urls:
+There is a small example website at [http://chordgenerator.net](http://chordgenerator.net) where you can try different chords and see how they are constructed. But basically it is just done by constructing the right url,
+name of the file is the name of the chord, finger positions (p), finger numbers (f) and size (s) are querystring parameters. E.g. the chords above are the following urls:
 
 * [http://chordgenerator.net/D.png?p=xx0232&f=---132&s=3](http://chordgenerator.net/D.png?p=xx0232&f=---132&s=3)
 * [http://chordgenerator.net/A.png?p=x02220&f=--123-&s=3](http://chordgenerator.net/A.png?p=x02220&f=--123-&s=3)
