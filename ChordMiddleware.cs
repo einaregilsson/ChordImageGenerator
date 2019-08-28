@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
 
 namespace EinarEgilsson.Chords
 {
@@ -34,7 +31,7 @@ namespace EinarEgilsson.Chords
 
             context.Response.ContentType = "image/png";
             context.Response.GetTypedHeaders().CacheControl = 
-                new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
+                new CacheControlHeaderValue()
                 {
                     Public = true,
                     MaxAge = TimeSpan.FromDays(7)
