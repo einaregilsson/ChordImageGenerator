@@ -2,20 +2,25 @@
  * Chord Image Generator
  * http://einaregilsson.com/chord-image-generator/
  *
- * Copyright (C) 2009-2012 Einar Egilsson [einar@einaregilsson.com]
+ * Copyright (C) 2009-2019 Einar Egilsson [einar@einaregilsson.com]
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to 
+ * deal in the Software without restriction, including without limitation the 
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+ * sell copies of the Software, and to permit persons to whom the Software is 
+ * furnished to do so, subject to the following conditions:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
  */
 using System;
 using System.Collections.Generic;
@@ -24,6 +29,12 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Text.RegularExpressions;
+
+//NOTE 2019-08-27: This code was written more than 10 years ago. I'm updating
+//the surrounding stuff now, getting everything running on .NET Core, just to
+//let this project live on, but the actual chord drawing code is kind of strange
+//in lots of ways and probably not how I would write it today. At the same time
+//it does work and I'm not really motivated enough to rewrite it :)
 
 namespace EinarEgilsson.Chords {
 
@@ -153,7 +164,7 @@ namespace EinarEgilsson.Chords {
 
             _xstart = _fretWidth;
             _ystart = (float) Math.Round(0.2f * _superScriptFontSize + _nameFontSize + _nutHeight + 1.7f * _markerWidth);
-
+            Console.WriteLine(_ystart);
             _imageWidth = (int)(_boxWidth + 5 * _fretWidth);
             _imageHeight = (int)(_boxHeight + _ystart + _fretWidth + _fretWidth);
 
@@ -278,7 +289,7 @@ namespace EinarEgilsson.Chords {
         private void DrawChordBox() {
             Pen pen = new Pen(_foregroundBrush, _lineWidth);
             float totalFretWidth = _fretWidth + _lineWidth;
-
+            _graphics.SmoothingMode = SmoothingMode.None;
             for (int i = 0; i <= FRET_COUNT; i++) {
                 float y = _ystart + i * totalFretWidth;
                 _graphics.DrawLine(pen, _xstart, y, _xstart + _boxWidth - _lineWidth, y);
@@ -286,14 +297,15 @@ namespace EinarEgilsson.Chords {
 
             for (int i = 0; i < 6; i++) {
                 float x = _xstart + (i * totalFretWidth);
-                _graphics.DrawLine(pen, x, _ystart, x, _ystart + _boxHeight - pen.Width);
+                _graphics.DrawLine(pen, x, _ystart, x,_ystart + _boxHeight - pen.Width);
             }
 
             if (_baseFret == 1) {
                 //Need to draw the nut
                 float nutHeight = _fretWidth / 2f;
-                _graphics.FillRectangle(_foregroundBrush, _xstart - _lineWidth / 2f, _ystart - nutHeight, _boxWidth, nutHeight);
+                _graphics.FillRectangle(_foregroundBrush, (int)Math.Ceiling(_xstart - _lineWidth / 2f), _ystart - nutHeight, _boxWidth, nutHeight);
             }
+            _graphics.SmoothingMode = SmoothingMode.HighQuality;
         }
 
         private struct Bar { public int Str, Pos, Length; public char Finger; }
