@@ -1,0 +1,20 @@
+
+service: chordytest
+
+provider:
+  name: aws
+  runtime: dotnetcore2.1
+  region: us-west-1
+  
+package:
+  artifact: bin/release/netcoreapp2.1/deploy-package.zip
+apiGateway: # Optional API Gateway global config
+    restApiId: chordybordy
+    
+functions:
+  api:
+    handler: chordgenerator::EinarEgilsson.Chords.LambdaEntryPoint::FunctionHandlerAsync
+    events:
+     - http:
+         path: /{proxy+}
+         method: ANY

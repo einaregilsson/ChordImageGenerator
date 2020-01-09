@@ -24,7 +24,7 @@ namespace EinarEgilsson.Chords
 
             var query = context.Request.Query;
             
-            var chordName = Regex.Match(context.Request.Path.ToString(), @"^/(.*)\.png$").Groups[1].Value;
+            var chordName = Regex.Match(context.Request.Path.ToString(), @"/(\w+)\.png$").Groups[1].Value;
             var pos = query["pos"].FirstOrDefault() ?? query["p"].FirstOrDefault() ?? "000000";
             var fingers = query["fingers"].FirstOrDefault() ?? query["f"].FirstOrDefault() ?? "------";
             var size = query["size"].FirstOrDefault() ?? query["s"].FirstOrDefault() ?? "1";

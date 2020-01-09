@@ -169,6 +169,11 @@ namespace EinarEgilsson.Chords {
 
             _signWidth = (int)(_fretWidth * 0.75);
             _signRadius = _signWidth / 2;
+
+            if (((int)_lineWidth%2) == 0) {
+                _xstart += 0.5f;
+                _ystart += 0.5f;
+            }
         }
 
         private string ParseName(string name)
@@ -290,18 +295,20 @@ namespace EinarEgilsson.Chords {
             float totalFretWidth = _fretWidth + _lineWidth;
             for (int i = 0; i <= FRET_COUNT; i++) {
                 float y = _ystart + i * totalFretWidth;
-                _graphics.DrawLine(pen, _xstart, y, _xstart + _boxWidth - _lineWidth, y);
+                float extra = (float)Math.Floor(_lineWidth / 2f);
+                _graphics.DrawLine(pen, _xstart - extra, y, _xstart + _boxWidth - extra, y);
             }
-
             for (int i = 0; i < 6; i++) {
                 float x = _xstart + (i * totalFretWidth);
+                
                 _graphics.DrawLine(pen, x, _ystart, x, _ystart + _boxHeight - pen.Width);
             }
 
             if (_baseFret == 1) {
                 //Need to draw the nut
-                float nutHeight = _fretWidth / 2f;
-                _graphics.FillRectangle(_foregroundBrush, _xstart - _lineWidth / 2f, _ystart - nutHeight, _boxWidth, nutHeight);
+                var nutPen = new Pen(_foregroundBrush, 1);
+                float nutHeight = (float)Math.Floor(_fretWidth / 2f);
+                _graphics.FillRectangle(_foregroundBrush, _xstart-(_lineWidth/2f - 0.5f), _ystart - nutHeight, _boxWidth, nutHeight+1);
             }
         }
 
