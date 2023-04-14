@@ -1,4 +1,9 @@
-#Chord Image Generator
+# NOTICE: This action is no longer being maintained
+Due the maintainer passing away, this repository is no longer being maintained..
+
+Development has moved to [rluetzner/ChordImageGenerator](https://github.com/rluetzner/ChordImageGenerator)
+
+# Chord Image Generator
 
 [http://einaregilsson.com/chord-image-generator/](http://einaregilsson.com/chord-image-generator/ "A blog post explaining more about the library")
 
